@@ -8,6 +8,7 @@
 
 var Clay = require("@rebble/clay");
 var messageKeys = require("message_keys");
+var protocol = require("../common/protocol");
 var clayConfig = require("./config");
 var customClay = require("./custom-clay");
 var settings = require("./settings");
@@ -18,7 +19,7 @@ var configMessage = require("./config-message");
 var clay = new Clay(clayConfig, customClay, { autoHandleEvents: false });
 
 Pebble.addEventListener("ready", function () {
-	console.log("PebTrader Zero PKJS ready");
+	console.log("PebTrader Zero PKJS ready (chunk=" + protocol.CHUNK_SIZE + ")");
 });
 
 Pebble.addEventListener("showConfiguration", function () {
