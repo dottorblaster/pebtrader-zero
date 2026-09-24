@@ -1,0 +1,14 @@
+# Pebble build output
+build/
+*.pbw
+.lock-waf_*
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Editor / OS
+.DS_Store
+*.swp
+*.swo

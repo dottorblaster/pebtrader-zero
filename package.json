@@ -1,0 +1,34 @@
+{
+  "name": "pebtrader-zero",
+  "author": "Alessio Biancalana",
+  "version": "0.1.0",
+  "keywords": ["pebble-app"],
+  "private": true,
+  "dependencies": {},
+  "pebble": {
+    "displayName": "PebTrader Zero",
+    "uuid": "61efda9c-bb1f-4c69-a7be-b71065ce31c7",
+    "projectType": "moddable",
+    "sdkVersion": "3",
+    "enableMultiJS": true,
+    "targetPlatforms": [
+      "emery",
+      "gabbro"
+    ],
+    "watchapp": {
+      "watchface": false
+    },
+    "capabilities": [
+      "configurable"
+    ],
+    "messageKeys": [
+      "COMMAND",
+      "STATUS",
+      "ERROR",
+      "DATA"
+    ],
+    "resources": {
+      "media": []
+    }
+  }
+}
