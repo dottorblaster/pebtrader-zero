@@ -50,8 +50,10 @@ jobs:
       - name: Install Pebble SDK
         run: |
           # `pebble sdk install` exits non-zero when the SDK is already
-          # installed, so only install on a cache miss.
-          if pebble sdk list | grep -q "${PEBBLE_SDK_VERSION}"; then
+          # installed, so only install on a cache miss. Check the SDK
+          # directory directly: `pebble sdk list` also prints available
+          # (not installed) versions.
+          if [ -d "$HOME/.local/share/pebble-sdk/SDKs/${PEBBLE_SDK_VERSION}" ]; then
             echo "SDK ${PEBBLE_SDK_VERSION} already installed (cache hit)"
           else
             pebble sdk install "${PEBBLE_SDK_VERSION}"
