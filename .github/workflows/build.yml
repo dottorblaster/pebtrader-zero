@@ -1,0 +1,59 @@
+name: Build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Cancel superseded runs on the same ref.
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  PEBBLE_TOOL_VERSION: "5.0.40"
+  PEBBLE_SDK_VERSION: "4.33.1"
+
+jobs:
+  build:
+    name: Build .pbw
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Cache Pebble SDK
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/share/pebble-sdk
+          key: pebble-sdk-${{ runner.os }}-${{ env.PEBBLE_SDK_VERSION }}
+
+      - name: Install pebble-tool
+        run: |
+          uv tool install "pebble-tool==${PEBBLE_TOOL_VERSION}"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Install Pebble SDK
+        run: |
+          pebble sdk install "${PEBBLE_SDK_VERSION}"
+          pebble sdk activate "${PEBBLE_SDK_VERSION}"
+
+      - name: Build
+        run: pebble build
+
+      - name: Upload .pbw
+        uses: actions/upload-artifact@v4
+        with:
+          name: pebtrader-zero-pbw
+          path: build/*.pbw
+          if-no-files-found: error

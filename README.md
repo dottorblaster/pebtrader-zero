@@ -1,5 +1,7 @@
 # PebTrader Zero
 
+[![Build](https://github.com/dottorblaster/pebtrader-zero/actions/workflows/build.yml/badge.svg)](https://github.com/dottorblaster/pebtrader-zero/actions/workflows/build.yml)
+
 A PebbleOS (Alloy) watch app to view the state of your
 [CardTrader Zero](https://www.cardtrader.com/) orders, right on your wrist.
 
