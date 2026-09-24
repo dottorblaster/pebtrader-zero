@@ -1,14 +1,16 @@
 /*
  * Logical screen stack for the watch UI.
  *
- * Screens are plain descriptors ({ kind, title, items, ... }), NOT Piu
- * contents: the shell renders them into a fixed content tree so navigation
- * never allocates new UI objects (the watch heap cannot afford it).
+ * Screens are plain descriptors, NOT UI objects: the shell renders them with
+ * Poco into a fixed screen, so navigation never allocates new UI (the watch
+ * heap cannot afford it).
+ *
+ * List item shape: { primary, secondary, value, action }.
  */
 
-export function menuScreen(title, items, hint) {
+export function listScreen(title, items, hint) {
 	return {
-		kind: "menu",
+		kind: "list",
 		title: title,
 		items: items || [],
 		hint: hint || "",

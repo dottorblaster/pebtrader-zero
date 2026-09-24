@@ -13,6 +13,10 @@ var clayConfig = require("./config");
 var customClay = require("./custom-clay");
 var settings = require("./settings");
 var configMessage = require("./config-message");
+var messaging = require("./messaging");
+
+// Watch <-> phone command channel (separate from Clay's config events).
+messaging.start();
 
 // We handle showConfiguration/webviewclosed ourselves so the token can be
 // stripped before anything is sent to the watch.

@@ -117,6 +117,22 @@ corrupt a fresh one. `decodePayload` then parses the JSON.
 The test suite encodes a worst-case payload (12 orders with long names and
 shipping, or a capped box) and asserts it stays under `PAYLOAD_BYTES`.
 
+## Watch list projection
+
+To keep the payload (and the watch's tiny JS heap) small, PKJS sends only the
+fields a list row needs for each order (`orders.toWatchList`):
+
+| Field | Meaning |
+| --- | --- |
+| `id` | order id (for `GET_DETAIL`) |
+| `state` | order state |
+| `size` | number of items |
+| `total` | formatted total |
+| `who` | counterparty username |
+| `ct0` | `true` for CardTrader Zero orders |
+
+The `ORDERS` payload body is `{ orders: [...], total }`.
+
 ## Example flow
 
 ```

@@ -72,6 +72,16 @@ test("missing fields do not throw", () => {
 	assert.deepEqual(summary.preview, []);
 });
 
+test("toWatchList projects the minimal watch fields", () => {
+	const list = orders.toWatchList(orders.normalizeOrders(fixture));
+	assert.equal(list.length, 2);
+	assert.deepEqual(Object.keys(list[0]).sort(), ["ct0", "id", "size", "state", "total", "who"]);
+	assert.equal(list[0].state, "done");
+	assert.equal(list[0].size, 51);
+	assert.equal(list[0].total, "€306.76");
+	assert.equal(list[0].ct0, true);
+});
+
 test("fetchOrders passes filters to the client and normalizes", async () => {
 	const calls = [];
 	const client = {

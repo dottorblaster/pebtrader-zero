@@ -157,6 +157,24 @@ function normalizeOrders(orders, options) {
 }
 
 /**
+ * Minimal per-order projection for the watch list. Strips everything the list
+ * row does not need to keep the AppMessage payload and the watch's JS heap
+ * small (the watch heap is tiny).
+ */
+function toWatchList(summaries) {
+	return (Array.isArray(summaries) ? summaries : []).map(function (order) {
+		return {
+			id: order.id,
+			state: order.state,
+			size: order.size,
+			total: order.total,
+			who: order.counterparty,
+			ct0: !!order.ct0,
+		};
+	});
+}
+
+/**
  * Fetch orders through the API client and normalize the result.
  * Resolves with the same structured envelope as the client:
  *   { ok: true, status, data: [summary...], rawCount }
@@ -191,5 +209,6 @@ module.exports = {
 	summarizeOrder: summarizeOrder,
 	summarizeOrderDetail: summarizeOrderDetail,
 	normalizeOrders: normalizeOrders,
+	toWatchList: toWatchList,
 	fetchOrders: fetchOrders,
 };
