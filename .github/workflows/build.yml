@@ -25,15 +25,18 @@ jobs:
 
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        uses: astral-sh/setup-uv@v10
         with:
           enable-cache: true
+          # The pinned tool version lives in this workflow, so hash the
+          # workflow to invalidate the uv cache when it changes.
+          cache-dependency-glob: ".github/workflows/build.yml"
 
       - name: Cache Pebble SDK
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ~/.local/share/pebble-sdk
           key: pebble-sdk-${{ runner.os }}-${{ env.PEBBLE_SDK_VERSION }}
@@ -52,7 +55,7 @@ jobs:
         run: pebble build
 
       - name: Upload .pbw
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: pebtrader-zero-pbw
           path: build/*.pbw
