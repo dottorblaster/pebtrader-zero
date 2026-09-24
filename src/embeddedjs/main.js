@@ -1,11 +1,13 @@
 /*
  * PebTrader Zero - watch-side (embeddedjs) entry point.
  *
- * This renders a minimal hello-world screen to validate the Alloy toolchain
- * on emery/gabbro. The real order list/detail UI is built in later issues.
+ * Renders a hello-world screen for now; the real order list/detail UI lands in
+ * later issues. Importing the shared protocol here proves the PKJS/watch field
+ * definitions resolve on the watch.
  */
 
 import {} from "piu/MC";
+import { CHUNK_SIZE } from "./protocol";
 
 const backgroundSkin = new Skin({ fill: "white" });
 
@@ -18,7 +20,7 @@ const titleStyle = new Style({
 
 class AppBehavior extends Behavior {
 	onDisplaying(application) {
-		console.log("PebTrader Zero ready");
+		console.log("PebTrader Zero ready (chunk=" + CHUNK_SIZE + ")");
 	}
 }
 

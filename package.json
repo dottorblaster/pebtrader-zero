@@ -34,8 +34,14 @@
       "CT0_ONLY",
       "REFRESH_MINUTES",
       "COMMAND",
+      "ORDER_ID",
+      "TYPE",
       "STATUS",
-      "ERROR",
+      "ERROR_CODE",
+      "ERROR_MESSAGE",
+      "SEQ",
+      "CHUNK_INDEX",
+      "CHUNK_COUNT",
       "DATA"
     ],
     "resources": {
