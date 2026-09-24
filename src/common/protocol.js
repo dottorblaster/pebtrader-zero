@@ -7,6 +7,10 @@
  *
  * It is a UMD-ish side-effect module because PKJS is CommonJS and the Moddable
  * watch runtime is ESM; neither can import the other's module object directly.
+ *
+ * The data tables are built lazily: the watch's JS heap is tiny, and eagerly
+ * allocating every map/string at startup exhausts it before the Piu app is up.
+ *
  * See docs/protocol.md for the wire contract.
  */
 
@@ -18,149 +22,134 @@
 })(this, function () {
 	"use strict";
 
-	// Must match pebble.messageKeys in package.json.
-	var MESSAGE_KEYS = [
-		"API_TOKEN",
-		"ROLE",
-		"CT0_ONLY",
-		"REFRESH_MINUTES",
-		"COMMAND",
-		"ORDER_ID",
-		"TYPE",
-		"STATUS",
-		"ERROR_CODE",
-		"ERROR_MESSAGE",
-		"SEQ",
-		"CHUNK_INDEX",
-		"CHUNK_COUNT",
-		"DATA",
-	];
-
-	// Commands: watch -> phone.
-	var COMMANDS = {
-		REFRESH: 1, // orders + CT0 box
-		GET_ORDERS: 2,
-		GET_DETAIL: 3, // requires ORDER_ID
-		GET_BOX: 4,
-	};
-
-	// Payload types: phone -> watch.
-	var TYPES = {
-		STATUS: 10,
-		ORDERS: 11,
-		ORDER_DETAIL: 12,
-		BOX: 13,
-	};
-
-	var STATUS = {
-		LOADING: 0,
-		OK: 1,
-		ERROR: 2,
-	};
-
-	var ERROR_CODES = {
-		NO_TOKEN: 1,
-		UNAUTHORIZED: 2,
-		NOT_FOUND: 3,
-		VALIDATION: 4,
-		RATE_LIMITED: 5,
-		SERVER: 6,
-		NETWORK: 7,
-		PARSE: 8,
-		UNKNOWN: 9,
-	};
-
-	// API client error code -> protocol error code.
-	var API_ERROR_TO_PROTOCOL = {
-		no_token: ERROR_CODES.NO_TOKEN,
-		unauthorized: ERROR_CODES.UNAUTHORIZED,
-		not_found: ERROR_CODES.NOT_FOUND,
-		validation_error: ERROR_CODES.VALIDATION,
-		rate_limited: ERROR_CODES.RATE_LIMITED,
-		server_error: ERROR_CODES.SERVER,
-		network_error: ERROR_CODES.NETWORK,
-		parse_error: ERROR_CODES.PARSE,
-	};
-
-	var ORDER_STATES = [
-		"hub_pending",
-		"paid",
-		"sent",
-		"arrived",
-		"done",
-		"request_for_cancel",
-		"canceled",
-		"cancelled",
-		"lost",
-	];
-
-	var ORDER_STATE_LABELS = {
-		hub_pending: "At hub",
-		paid: "Paid",
-		sent: "Shipped",
-		arrived: "Arrived",
-		done: "Done",
-		request_for_cancel: "Cancel?",
-		canceled: "Cancelled",
-		cancelled: "Cancelled",
-		lost: "Lost",
-		unknown: "Unknown",
-	};
-
-	var ORDER_STATE_GROUPS = {
-		hub_pending: "active",
-		paid: "active",
-		sent: "active",
-		arrived: "active",
-		request_for_cancel: "attention",
-		done: "done",
-		canceled: "cancelled",
-		cancelled: "cancelled",
-		lost: "cancelled",
-		unknown: "unknown",
-	};
-
-	var CT0_STATES = ["ok", "pending", "missing"];
-	var CT0_STATE_LABELS = { ok: "Ready", pending: "On the way", missing: "Missing" };
-
-	// Keep watch payloads bounded (see docs/protocol.md).
-	var LIMITS = {
-		ORDERS: 12,
-		BOX_ITEMS: 12,
-		DETAIL_ITEMS: 12,
-		PAYLOAD_BYTES: 8192,
-	};
+	var cache = {};
 
 	// Bytes of JSON text per AppMessage chunk. The Alloy Message module opens
 	// app_message with the platform maximum, but stay conservative.
 	var CHUNK_SIZE = 800;
 
-	function invert(map) {
-		var out = {};
-		Object.keys(map).forEach(function (key) {
-			out[map[key]] = key;
-		});
-		return out;
+	function get(key) {
+		if (!(key in cache)) cache[key] = build(key);
+		return cache[key];
+	}
+
+	function build(key) {
+		switch (key) {
+			case "MESSAGE_KEYS":
+				return [
+					"API_TOKEN",
+					"ROLE",
+					"CT0_ONLY",
+					"REFRESH_MINUTES",
+					"COMMAND",
+					"ORDER_ID",
+					"TYPE",
+					"STATUS",
+					"ERROR_CODE",
+					"ERROR_MESSAGE",
+					"SEQ",
+					"CHUNK_INDEX",
+					"CHUNK_COUNT",
+					"DATA",
+				];
+			case "COMMANDS":
+				return { REFRESH: 1, GET_ORDERS: 2, GET_DETAIL: 3, GET_BOX: 4 };
+			case "TYPES":
+				return { STATUS: 10, ORDERS: 11, ORDER_DETAIL: 12, BOX: 13 };
+			case "STATUS":
+				return { LOADING: 0, OK: 1, ERROR: 2 };
+			case "ERROR_CODES":
+				return {
+					NO_TOKEN: 1,
+					UNAUTHORIZED: 2,
+					NOT_FOUND: 3,
+					VALIDATION: 4,
+					RATE_LIMITED: 5,
+					SERVER: 6,
+					NETWORK: 7,
+					PARSE: 8,
+					UNKNOWN: 9,
+				};
+			case "API_ERROR_TO_PROTOCOL":
+				return {
+					no_token: 1,
+					unauthorized: 2,
+					not_found: 3,
+					validation_error: 4,
+					rate_limited: 5,
+					server_error: 6,
+					network_error: 7,
+					parse_error: 8,
+				};
+			case "ORDER_STATES":
+				return [
+					"hub_pending",
+					"paid",
+					"sent",
+					"arrived",
+					"done",
+					"request_for_cancel",
+					"canceled",
+					"cancelled",
+					"lost",
+				];
+			case "ORDER_STATE_LABELS":
+				return {
+					hub_pending: "At hub",
+					paid: "Paid",
+					sent: "Shipped",
+					arrived: "Arrived",
+					done: "Done",
+					request_for_cancel: "Cancel?",
+					canceled: "Cancelled",
+					cancelled: "Cancelled",
+					lost: "Lost",
+					unknown: "Unknown",
+				};
+			case "ORDER_STATE_GROUPS":
+				return {
+					hub_pending: "active",
+					paid: "active",
+					sent: "active",
+					arrived: "active",
+					request_for_cancel: "attention",
+					done: "done",
+					canceled: "cancelled",
+					cancelled: "cancelled",
+					lost: "cancelled",
+					unknown: "unknown",
+				};
+			case "CT0_STATES":
+				return ["ok", "pending", "missing"];
+			case "CT0_STATE_LABELS":
+				return { ok: "Ready", pending: "On the way", missing: "Missing" };
+			case "LIMITS":
+				return { ORDERS: 12, BOX_ITEMS: 12, DETAIL_ITEMS: 12, PAYLOAD_BYTES: 8192 };
+		}
 	}
 
 	function orderStateLabel(state) {
-		return ORDER_STATE_LABELS[state] || ORDER_STATE_LABELS.unknown;
+		var labels = get("ORDER_STATE_LABELS");
+		return labels[state] || labels.unknown;
 	}
 
 	function orderStateGroup(state) {
-		return ORDER_STATE_GROUPS[state] || "unknown";
+		var groups = get("ORDER_STATE_GROUPS");
+		return groups[state] || "unknown";
 	}
 
 	function isKnownOrderState(state) {
-		return ORDER_STATES.indexOf(state) !== -1;
+		return get("ORDER_STATES").indexOf(state) !== -1;
 	}
 
 	function ct0StateLabel(state) {
-		return CT0_STATE_LABELS[state] || state;
+		var labels = get("CT0_STATE_LABELS");
+		return labels[state] || state;
 	}
 
 	function errorCodeFromApi(code) {
-		return API_ERROR_TO_PROTOCOL[code] || ERROR_CODES.UNKNOWN;
+		var map = get("API_ERROR_TO_PROTOCOL");
+		return map[code] || get("ERROR_CODES").UNKNOWN;
 	}
 
 	/** UTF-8 byte length of a JS string (surrogate-pair aware). */
@@ -261,22 +250,19 @@
 	}
 
 	return {
-		MESSAGE_KEYS: MESSAGE_KEYS,
-		COMMANDS: COMMANDS,
-		COMMAND_NAMES: invert(COMMANDS),
-		TYPES: TYPES,
-		TYPE_NAMES: invert(TYPES),
-		STATUS: STATUS,
-		STATUS_NAMES: invert(STATUS),
-		ERROR_CODES: ERROR_CODES,
-		API_ERROR_TO_PROTOCOL: API_ERROR_TO_PROTOCOL,
-		ORDER_STATES: ORDER_STATES,
-		ORDER_STATE_LABELS: ORDER_STATE_LABELS,
-		ORDER_STATE_GROUPS: ORDER_STATE_GROUPS,
-		CT0_STATES: CT0_STATES,
-		CT0_STATE_LABELS: CT0_STATE_LABELS,
-		LIMITS: LIMITS,
 		CHUNK_SIZE: CHUNK_SIZE,
+		get MESSAGE_KEYS() { return get("MESSAGE_KEYS"); },
+		get COMMANDS() { return get("COMMANDS"); },
+		get TYPES() { return get("TYPES"); },
+		get STATUS() { return get("STATUS"); },
+		get ERROR_CODES() { return get("ERROR_CODES"); },
+		get API_ERROR_TO_PROTOCOL() { return get("API_ERROR_TO_PROTOCOL"); },
+		get ORDER_STATES() { return get("ORDER_STATES"); },
+		get ORDER_STATE_LABELS() { return get("ORDER_STATE_LABELS"); },
+		get ORDER_STATE_GROUPS() { return get("ORDER_STATE_GROUPS"); },
+		get CT0_STATES() { return get("CT0_STATES"); },
+		get CT0_STATE_LABELS() { return get("CT0_STATE_LABELS"); },
+		get LIMITS() { return get("LIMITS"); },
 		orderStateLabel: orderStateLabel,
 		orderStateGroup: orderStateGroup,
 		isKnownOrderState: isKnownOrderState,

@@ -4,7 +4,12 @@
 		"$(MODDABLE)/examples/manifest_typings.json"
 	],
 	"modules": {
-		"*": ["./main", "./protocol"],
+		"*": [
+			"./main",
+			"./app",
+			"./nav",
+			"./protocol"
+		],
 		"shared-protocol": "../common/protocol"
 	}
 }
