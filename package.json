@@ -2,9 +2,16 @@
   "name": "pebtrader-zero",
   "author": "Alessio Biancalana",
   "version": "0.1.0",
-  "keywords": ["pebble-app"],
+  "keywords": [
+    "pebble-app"
+  ],
   "private": true,
-  "dependencies": {},
+  "scripts": {
+    "test": "node --test test/*.test.cjs"
+  },
+  "dependencies": {
+    "@rebble/clay": "^1.1.0"
+  },
   "pebble": {
     "displayName": "PebTrader Zero",
     "uuid": "61efda9c-bb1f-4c69-a7be-b71065ce31c7",
@@ -22,6 +29,10 @@
       "configurable"
     ],
     "messageKeys": [
+      "API_TOKEN",
+      "ROLE",
+      "CT0_ONLY",
+      "REFRESH_MINUTES",
       "COMMAND",
       "STATUS",
       "ERROR",

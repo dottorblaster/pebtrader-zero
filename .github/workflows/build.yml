@@ -60,6 +60,9 @@ jobs:
           fi
           pebble sdk activate "${PEBBLE_SDK_VERSION}"
 
+      - name: Install npm dependencies
+        run: npm ci
+
       - name: Build
         run: pebble build
 

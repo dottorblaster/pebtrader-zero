@@ -1,11 +1,54 @@
 /*
  * PebTrader Zero - phone-side (PebbleKit JS) entry point.
  *
- * Runs inside the Pebble mobile app. This is where CardTrader API calls will
- * live (the API token stays on the phone). For now it just proves the JS
- * environment is wired up.
+ * Runs inside the Pebble mobile app. The CardTrader API token is entered via
+ * the Clay config page, stored in phone localStorage and used here for the API
+ * calls. It is deliberately never sent to the watch.
  */
 
-Pebble.addEventListener("ready", function (e) {
+var Clay = require("@rebble/clay");
+var messageKeys = require("message_keys");
+var clayConfig = require("./config");
+var customClay = require("./custom-clay");
+var settings = require("./settings");
+var configMessage = require("./config-message");
+
+// We handle showConfiguration/webviewclosed ourselves so the token can be
+// stripped before anything is sent to the watch.
+var clay = new Clay(clayConfig, customClay, { autoHandleEvents: false });
+
+Pebble.addEventListener("ready", function () {
 	console.log("PebTrader Zero PKJS ready");
+});
+
+Pebble.addEventListener("showConfiguration", function () {
+	Pebble.openURL(clay.generateUrl());
+});
+
+Pebble.addEventListener("webviewclosed", function (e) {
+	if (!e || !e.response) {
+		return;
+	}
+
+	// Clay persists the raw settings (including the token) to localStorage.
+	var raw = clay.getSettings(e.response, false);
+
+	var split = configMessage.splitSettings(
+		raw,
+		Clay.prepareSettingsForAppMessage,
+		messageKeys.API_TOKEN
+	);
+
+	settings.setToken(split.token);
+
+	// Only non-secret settings are ever sent to the watch.
+	Pebble.sendAppMessage(
+		split.watchDict,
+		function () {
+			console.log("Settings sent to watch");
+		},
+		function () {
+			console.log("Could not send settings to watch");
+		}
+	);
 });
