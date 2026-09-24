@@ -55,6 +55,14 @@ test("getInfo returns parsed data and sends the bearer token", async () => {
 	assert.equal(transport.calls[0].headers.Authorization, "Bearer tok");
 });
 
+test("getOrder hits /orders/:id", async () => {
+	const { client, transport } = build([jsonResponse(200, { id: 123 })]);
+	const result = await client.getOrder(123);
+
+	assert.equal(result.ok, true);
+	assert.equal(transport.calls[0].url, DEFAULT_BASE_URL + "/orders/123");
+});
+
 test("no token short-circuits without a request", async () => {
 	const { client, transport } = build([], { getToken: () => "" });
 	const result = await client.getInfo();

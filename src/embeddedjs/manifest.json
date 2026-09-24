@@ -11,6 +11,7 @@
 			"./messenger",
 			"./protocol"
 		],
-		"shared-protocol": "../common/protocol"
+		"shared-protocol": "../common/protocol",
+		"shared-message-handler": "../common/message-handler"
 	}
 }

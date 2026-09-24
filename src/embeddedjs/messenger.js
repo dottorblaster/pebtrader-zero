@@ -5,45 +5,18 @@
  * The Message key order MUST match package.json pebble.messageKeys, because
  * AppMessage assigns `10000 + index` in that order. protocol.MESSAGE_KEYS is
  * asserted to equal that list, so we reuse it here.
+ *
+ * Payload handling lives in src/common/message-handler.js so it can be tested.
  */
 
 import Message from "pebble/message";
 import protocol from "./protocol";
+import "shared-message-handler";
+
+const createMessageHandler = globalThis.PebTraderMessageHandler.createMessageHandler;
 
 export function createMessenger(handlers) {
-	handlers = handlers || {};
-	const reassembler = protocol.createReassembler();
-
-	function handle(data) {
-		const type = data.TYPE;
-		if (type === undefined) return;
-
-		const TYPES = protocol.TYPES;
-		if (type === TYPES.STATUS) {
-			if (handlers.onStatus) handlers.onStatus(data.STATUS, data.ERROR_CODE, data.ERROR_MESSAGE);
-			return;
-		}
-
-		const text = reassembler.push({
-			seq: data.SEQ,
-			index: data.CHUNK_INDEX,
-			count: data.CHUNK_COUNT,
-			data: data.DATA,
-		});
-		if (text === null) return;
-
-		let payload;
-		try {
-			payload = protocol.decodePayload(text);
-		} catch (e) {
-			if (handlers.onStatus) handlers.onStatus(protocol.STATUS.ERROR, protocol.ERROR_CODES.PARSE, "Bad data");
-			return;
-		}
-
-		if (type === TYPES.ORDERS && handlers.onOrders) handlers.onOrders(payload);
-		else if (type === TYPES.BOX && handlers.onBox) handlers.onBox(payload);
-		else if (type === TYPES.ORDER_DETAIL && handlers.onDetail) handlers.onDetail(payload);
-	}
+	const handle = createMessageHandler(protocol, handlers);
 
 	const message = new Message({
 		keys: protocol.MESSAGE_KEYS,
@@ -56,7 +29,7 @@ export function createMessenger(handlers) {
 			handle(data);
 		},
 		onWritable() {
-			if (handlers.onReady) handlers.onReady();
+			if (handlers && handlers.onReady) handlers.onReady();
 		},
 	});
 

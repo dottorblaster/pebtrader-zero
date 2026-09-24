@@ -10,7 +10,7 @@ import Poco from "commodetto/Poco";
 import Button from "pebble/button";
 import protocol from "./protocol";
 import { createMessenger } from "./messenger";
-import { Navigator, listScreen, statusScreen } from "./nav";
+import { Navigator, listScreen, statusScreen, detailScreen } from "./nav";
 
 const render = new Poco(screen);
 
@@ -21,6 +21,7 @@ const fontRegular = new render.Font("Gothic-Regular", 14);
 const black = render.makeColor(0, 0, 0);
 const white = render.makeColor(255, 255, 255);
 const gray = render.makeColor(120, 120, 120);
+const dark = render.makeColor(50, 50, 50);
 
 const ROUND = screen.width === screen.height;
 const HEADER_H = ROUND ? 34 : 30;
@@ -75,6 +76,7 @@ class Shell {
 		this.items = [];
 		this.updatedAt = null;
 		this.ready = false;
+		this.pendingDetail = false;
 
 		this.button = new Button({
 			types: ["select", "up", "down", "back"],
@@ -93,11 +95,13 @@ class Shell {
 		this.startTimer = null;
 		this.messenger = createMessenger({
 			onReady: () => {
-				// PKJS pushes the first payload; this just enables manual refresh.
+				if (this.ready) return;
 				this.ready = true;
+				this.refresh();
 			},
 			onStatus: (status, code, message) => this.onStatus(status, code, message),
 			onOrders: payload => this.onOrders(payload),
+			onDetail: payload => this.onDetail(payload),
 		});
 	}
 
@@ -118,6 +122,7 @@ class Shell {
 			render.drawText(screen.title, fontHeader, white, (render.width - titleWidth) / 2, (HEADER_H - fontHeader.height) / 2);
 
 			if (screen.kind === "list") this.drawList(screen);
+			else if (screen.kind === "detail") this.drawDetail(screen);
 			else this.drawStatus(screen);
 
 			if (screen.hint) {
@@ -204,8 +209,17 @@ class Shell {
 	}
 
 	onStatus(status, code, message) {
-		if (status === protocol.STATUS.ERROR) this.showError(code, message);
-		else if (status === protocol.STATUS.OK && this.items.length === 0) this.showEmpty();
+		if (status === protocol.STATUS.ERROR) {
+			if (this.pendingDetail) {
+				this.pendingDetail = false;
+				this.nav.replaceTop(statusScreen("Order", message || "Could not load this order.", "Back to return"));
+				this.draw();
+			} else {
+				this.showError(code, message);
+			}
+		} else if (status === protocol.STATUS.OK && this.items.length === 0) {
+			this.showEmpty();
+		}
 	}
 
 	onOrders(payload) {
@@ -213,6 +227,7 @@ class Shell {
 		// is tiny and keeping them leaves no room to open the detail screen.
 		const list = (payload && payload.orders) || [];
 		this.items = list.map(order => ({
+			id: order.id,
 			primary: protocol.orderStateLabel(order.state),
 			secondary: this.secondaryFor(order),
 			value: order.total || "",
@@ -246,10 +261,46 @@ class Shell {
 		return lines.join("\n");
 	}
 
-	openOrder(item) {
-		if (!item || !item.detail) return;
-		this.nav.push(statusScreen("Order", item.detail, "Back to return"));
+	openDetail(orderId) {
+		if (!orderId) return;
+		this.pendingDetail = true;
+		this.nav.push(statusScreen("Order", "Loading\u2026", "Back to return"));
 		this.draw();
+		if (this.messenger) this.messenger.requestDetail(orderId);
+	}
+
+	onDetail(payload) {
+		this.pendingDetail = false;
+		const text = (payload && payload.text) || "";
+		const lines = text.length ? text.split("\n") : [];
+		this.nav.replaceTop(detailScreen("Order", lines, "Back to return"));
+		this.draw();
+	}
+
+	detailVisibleLines() {
+		const lineHeight = fontRegular.height + 2;
+		const top = HEADER_H + 2;
+		const bottom = render.height - HINT_H - (ROUND ? 22 : 0) - 2;
+		return Math.max(1, Math.floor((bottom - top) / lineHeight));
+	}
+
+	drawDetail(screen) {
+		const lineHeight = fontRegular.height + 2;
+		const top = HEADER_H + 2;
+		const visible = this.detailVisibleLines();
+		const maxOffset = Math.max(0, screen.lines.length - visible);
+		if (screen.offset > maxOffset) screen.offset = maxOffset;
+		if (screen.offset < 0) screen.offset = 0;
+
+		for (let i = 0; i < visible; i++) {
+			const line = screen.lines[screen.offset + i];
+			if (line === undefined) break;
+			const y = top + i * lineHeight;
+			const heading = line.charCodeAt(0) === 1;
+			const value = heading ? line.slice(1) : line;
+			const font = heading ? fontBold : fontRegular;
+			render.drawText(fitText(value, font, render.width - SIDE_PAD * 2), font, heading ? black : dark, SIDE_PAD, y);
+		}
 	}
 
 	onButton(down, type) {
@@ -276,14 +327,25 @@ class Shell {
 			if (this.nav.pop()) this.draw();
 			return;
 		}
-		if (!screen || screen.kind !== "list") return;
+		if (!screen) return;
 
-		if (type === "up" && screen.index > 0) {
-			screen.index -= 1;
-			this.draw();
-		} else if (type === "down" && screen.index < screen.items.length - 1) {
-			screen.index += 1;
-			this.draw();
+		if (screen.kind === "list") {
+			if (type === "up" && screen.index > 0) {
+				screen.index -= 1;
+				this.draw();
+			} else if (type === "down" && screen.index < screen.items.length - 1) {
+				screen.index += 1;
+				this.draw();
+			}
+		} else if (screen.kind === "detail") {
+			const maxOffset = Math.max(0, screen.lines.length - this.detailVisibleLines());
+			if (type === "up" && screen.offset > 0) {
+				screen.offset -= 1;
+				this.draw();
+			} else if (type === "down" && screen.offset < maxOffset) {
+				screen.offset += 1;
+				this.draw();
+			}
 		}
 	}
 
@@ -291,7 +353,7 @@ class Shell {
 		const screen = this.nav.current;
 		if (screen && screen.kind === "list") {
 			const item = screen.items[screen.index];
-			if (item) this.openOrder(item);
+			if (item) this.openDetail(item.id);
 		}
 	}
 }

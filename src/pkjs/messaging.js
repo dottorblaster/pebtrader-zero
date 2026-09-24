@@ -27,6 +27,9 @@ var seq = 0;
 var queue = [];
 var pumping = false;
 var MAX_TRIES = 3;
+// The watch defers onReadable by a tick and overwrites an unread message, so
+// pace the sends or back-to-back chunks get lost.
+var PUMP_DELAY_MS = 80;
 
 function enqueue(dict) {
 	queue.push({ dict: dict, tries: 0 });
@@ -42,7 +45,7 @@ function pump() {
 		item.dict,
 		function () {
 			pumping = false;
-			pump();
+			setTimeout(pump, PUMP_DELAY_MS);
 		},
 		function () {
 			pumping = false;
@@ -106,18 +109,51 @@ function refreshOrders() {
 		});
 }
 
+function refreshDetail(orderId) {
+	sendStatus(protocol.STATUS.LOADING);
+
+	orders
+		.fetchOrderDetail(client, orderId, { maxItems: protocol.LIMITS.DETAIL_ITEMS })
+		.then(function (result) {
+			if (!result.ok) {
+				sendStatus(
+					protocol.STATUS.ERROR,
+					protocol.errorCodeFromApi(result.error.code),
+					result.error.message
+				);
+				return;
+			}
+			sendPayload(protocol.TYPES.ORDER_DETAIL, result.payload);
+			sendStatus(protocol.STATUS.OK);
+		});
+}
+
 function onAppMessage(e) {
 	var payload = (e && e.payload) || {};
 	var command = payload.COMMAND;
 	if (command === protocol.COMMANDS.REFRESH || command === protocol.COMMANDS.GET_ORDERS) {
 		refreshOrders();
+	} else if (command === protocol.COMMANDS.GET_DETAIL) {
+		var orderId = payload.ORDER_ID;
+		if (orderId) refreshDetail(orderId);
 	}
 }
 
+function wake() {
+	// The watch cannot write until it has received a message (that is what
+	// marks its AppMessage channel writable). Send a few wakes so the watch's
+	// Message instance, created slightly later, definitely sees one.
+	sendStatus(protocol.STATUS.LOADING);
+	setTimeout(function () {
+		sendStatus(protocol.STATUS.LOADING);
+	}, 800);
+	setTimeout(function () {
+		sendStatus(protocol.STATUS.LOADING);
+	}, 2000);
+}
+
 function start() {
-	// PKJS must send first: the watch cannot write until it has received a
-	// message (that is what marks the AppMessage channel writable).
-	Pebble.addEventListener("ready", refreshOrders);
+	Pebble.addEventListener("ready", wake);
 	Pebble.addEventListener("appmessage", onAppMessage);
 }
 

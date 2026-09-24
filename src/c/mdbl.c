@@ -6,8 +6,8 @@
 // The firmware requires all three of stack/slot/chunk to be non-zero when a
 // custom creation record is supplied.
 #define PEBBLE_JS_STACK_HEAP 4096
-#define PEBBLE_JS_SLOT_HEAP 49152
-#define PEBBLE_JS_CHUNK_HEAP 8192
+#define PEBBLE_JS_SLOT_HEAP 57344
+#define PEBBLE_JS_CHUNK_HEAP 12288
 
 int main(void) {
   Window *w = window_create();

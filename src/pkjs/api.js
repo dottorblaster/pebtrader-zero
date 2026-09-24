@@ -206,6 +206,9 @@ function createClient(options) {
 		getOrders: function (params) {
 			return get("/orders", params);
 		},
+		getOrder: function (id) {
+			return get("/orders/" + encodeURIComponent(id));
+		},
 		getCt0BoxItems: function () {
 			return get("/ct0_box_items");
 		},

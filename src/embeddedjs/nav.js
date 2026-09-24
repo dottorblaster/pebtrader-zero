@@ -28,6 +28,17 @@ export function statusScreen(title, message, hint) {
 	};
 }
 
+/** Scrollable list of display lines ({ t: text, h: heading }). */
+export function detailScreen(title, lines, hint) {
+	return {
+		kind: "detail",
+		title: title,
+		lines: lines || [],
+		hint: hint || "",
+		offset: 0,
+	};
+}
+
 export class Navigator {
 	constructor() {
 		this.stack = [];
@@ -43,6 +54,12 @@ export class Navigator {
 
 	reset(screen) {
 		this.stack = [screen];
+		return screen;
+	}
+
+	replaceTop(screen) {
+		if (this.stack.length) this.stack[this.stack.length - 1] = screen;
+		else this.stack = [screen];
 		return screen;
 	}
 

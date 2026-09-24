@@ -82,6 +82,40 @@ test("toWatchList projects the minimal watch fields", () => {
 	assert.equal(list[0].ct0, true);
 });
 
+test("detailLines formats a fixture order", () => {
+	const lines = orders.detailLines(orders.summarizeOrderDetail(fixture[0], { maxItems: 3 }));
+
+	assert.ok(lines.some(line => line.t === "Done" && line.h === true));
+	assert.ok(lines.some(line => line.t === "Timeline" && line.h === true));
+	assert.ok(lines.some(line => line.t.startsWith("Total: ")));
+	assert.ok(lines.some(line => line.t.startsWith("Items (")));
+	assert.ok(lines.some(line => line.t.includes("1x Lembas")));
+});
+
+test("packDetail joins lines with heading markers", () => {
+	const packed = orders.packDetail([
+		{ t: "Done", h: true },
+		{ t: "Total: 1", h: false },
+	]);
+	assert.equal(packed.text, "\u0001Done\nTotal: 1");
+});
+
+test("detailLines survives missing optional fields", () => {
+	const lines = orders.detailLines(orders.summarizeOrderDetail({ id: 1, state: "paid", size: 1 }));
+	assert.ok(lines.length >= 1);
+	assert.equal(lines[0].t, "Paid");
+});
+
+test("fetchOrderDetail builds lines via getOrder", async () => {
+	const client = { getOrder: () => Promise.resolve({ ok: true, status: 200, data: fixture[0] }) };
+	const result = await orders.fetchOrderDetail(client, 38985298, { maxItems: 3 });
+
+	assert.equal(result.ok, true);
+	assert.equal(result.data.id, 38985298);
+	assert.ok(Array.isArray(result.lines));
+	assert.ok(result.lines.length > 0);
+});
+
 test("fetchOrders passes filters to the client and normalizes", async () => {
 	const calls = [];
 	const client = {

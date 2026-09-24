@@ -9,6 +9,13 @@
  * and weigh >100 KB), so the watch never sees it raw.
  */
 
+var protocol = require("../common/protocol");
+
+// Heading lines are marked with a leading SOH so the watch can split the text
+// and still know which lines are headings (one string beats N line objects on
+// the watch's tiny heap).
+var HEADING_MARK = "\u0001";
+
 // Documented order states, plus the spelling seen in the wild.
 var ORDER_STATES = [
 	"hub_pending",
@@ -174,6 +181,88 @@ function toWatchList(summaries) {
 	});
 }
 
+function formatDateTime(iso) {
+	if (typeof iso !== "string" || iso.length < 16) return null;
+	return iso.slice(0, 10) + " " + iso.slice(11, 16);
+}
+
+/**
+ * Turn a normalized order detail into display lines for the watch. The watch
+ * heap is tiny, so PKJS does the formatting and the watch just renders strings.
+ * Each line is { t: text, h: boolean } where h marks a heading.
+ */
+function detailLines(order) {
+	var lines = [];
+	function head(text) {
+		lines.push({ t: text, h: true });
+	}
+	function text(value) {
+		if (value) lines.push({ t: value, h: false });
+	}
+
+	head(protocol.orderStateLabel(order.state));
+	text(order.size + (order.size === 1 ? " item" : " items") + (order.ct0 ? " \u00b7 CardTrader Zero" : ""));
+	if (order.code) text("Code: " + order.code);
+	if (order.total) text("Total: " + order.total);
+	if (order.counterparty) text("Counterparty: " + order.counterparty);
+
+	if (order.paidAt || order.sentAt || order.cancelledAt) {
+		head("Timeline");
+		if (order.paidAt) text("Paid: " + formatDateTime(order.paidAt));
+		if (order.sentAt) text("Sent: " + formatDateTime(order.sentAt));
+		if (order.cancelledAt) text("Cancelled: " + formatDateTime(order.cancelledAt));
+	}
+
+	if (order.shipping) {
+		head("Shipping");
+		if (order.shipping.name) text(order.shipping.name);
+		if (order.shipping.tracked) text("Tracked");
+		if (order.shipping.trackingCode) text("Code: " + order.shipping.trackingCode);
+	}
+
+	var items = order.items || [];
+	if (items.length) {
+		head("Items (" + (order.itemCount || items.length) + ")");
+		items.forEach(function (item) {
+			var line = item.quantity + "x " + item.name;
+			if (item.price) line += " \u2014 " + item.price;
+			text(line);
+			var meta = [item.condition, item.expansion].filter(Boolean).join(" \u00b7 ");
+			if (meta) text(meta);
+		});
+		if (order.itemsTruncated) {
+			text("\u2026 and " + ((order.itemCount || 0) - items.length) + " more");
+		}
+	}
+
+	return lines;
+}
+
+/** Pack display lines into a single string for the wire. */
+function packDetail(lines) {
+	return {
+		text: lines
+			.map(function (line) {
+				return (line.h ? HEADING_MARK : "") + line.t;
+			})
+			.join("\n"),
+	};
+}
+
+/**
+ * Fetch a single order and build its display payload.
+ * Resolves with { ok, status, data: detail, lines, payload } or the client's error.
+ */
+function fetchOrderDetail(client, id, options) {
+	options = options || {};
+	return client.getOrder(id).then(function (result) {
+		if (!result.ok) return result;
+		var detail = summarizeOrderDetail(result.data, { maxItems: options.maxItems });
+		var lines = detailLines(detail);
+		return { ok: true, status: result.status, data: detail, lines: lines, payload: packDetail(lines) };
+	});
+}
+
 /**
  * Fetch orders through the API client and normalize the result.
  * Resolves with the same structured envelope as the client:
@@ -208,6 +297,9 @@ module.exports = {
 	normalizeState: normalizeState,
 	summarizeOrder: summarizeOrder,
 	summarizeOrderDetail: summarizeOrderDetail,
+	detailLines: detailLines,
+	packDetail: packDetail,
+	fetchOrderDetail: fetchOrderDetail,
 	normalizeOrders: normalizeOrders,
 	toWatchList: toWatchList,
 	fetchOrders: fetchOrders,
