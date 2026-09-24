@@ -1,0 +1,1919 @@
+[
+  {
+    "id": 108830813,
+    "quantity": {
+      "ok": 1
+    },
+    "seller": {
+      "id": 563060,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 439750589,
+    "blueprint_id": 308443,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Myr Enforcer",
+    "expansion": "Foundations Jumpstart",
+    "description": null,
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "756",
+      "cmc": "0",
+      "mtg_card_colors": "C",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 122,
+      "currency": "EUR"
+    },
+    "formatted_price": "€1.22",
+    "mkm_id": 796931,
+    "tcg_player_id": 590103,
+    "scryfall_id": "78a6ec6a-b59d-4c39-a0fa-7e1d2a8a0df3",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-08-07T14:17:35.000Z",
+    "estimated_arrived_at": "2026-09-25T13:53:55.704Z",
+    "arrived_at": "2026-08-27T12:44:18.000Z",
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 108836649,
+    "quantity": {
+      "ok": 1
+    },
+    "seller": {
+      "id": 182271,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 440393940,
+    "blueprint_id": 17867,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Galvanic Blast",
+    "expansion": "Scars of Mirrodin",
+    "description": null,
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Slightly Played",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "091",
+      "cmc": "1.0",
+      "mtg_card_colors": "R",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 296,
+      "currency": "EUR"
+    },
+    "formatted_price": "€2.96",
+    "mkm_id": 242591,
+    "tcg_player_id": 36340,
+    "scryfall_id": "f5881bbc-8600-464d-9dcd-5a7780918d1d",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-08-07T16:09:11.000Z",
+    "estimated_arrived_at": "2026-09-25T13:53:55.704Z",
+    "arrived_at": "2026-08-27T12:41:05.000Z",
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 111125682,
+    "quantity": {
+      "ok": 2
+    },
+    "seller": {
+      "id": 55684,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 440157526,
+    "blueprint_id": 204092,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Thoughtcast",
+    "expansion": "Commander: Kamigawa Neon Dynasty",
+    "description": "",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "099",
+      "cmc": "5",
+      "mtg_card_colors": "U",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 174,
+      "currency": "EUR"
+    },
+    "formatted_price": "€1.74",
+    "mkm_id": 608914,
+    "tcg_player_id": 263055,
+    "scryfall_id": "96e109f7-9be2-4ae0-a1e2-cfd296db84f1",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-08-07T16:09:11.000Z",
+    "estimated_arrived_at": "2026-09-25T13:53:55.705Z",
+    "arrived_at": "2026-09-07T09:15:30.000Z",
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 111602003,
+    "quantity": {
+      "ok": 5
+    },
+    "seller": {
+      "id": 16820,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 375790114,
+    "blueprint_id": 198256,
+    "category_id": 2,
+    "game_id": 1,
+    "name": "Treasure Token // Blood",
+    "expansion": "Innistrad: Crimson Vow Collectors",
+    "description": "",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "ru",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "T 18/17",
+      "cmc": "",
+      "mtg_card_colors": "",
+      "artist": ""
+    },
+    "buyer_price": {
+      "cents": 50,
+      "currency": "EUR"
+    },
+    "formatted_price": "€0.50",
+    "mkm_id": 584525,
+    "tcg_player_id": null,
+    "scryfall_id": null,
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-08-31T07:39:13.000Z",
+    "estimated_arrived_at": "2026-09-25T13:53:55.706Z",
+    "arrived_at": "2026-09-09T10:35:50.000Z",
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 111602004,
+    "quantity": {
+      "ok": 2
+    },
+    "seller": {
+      "id": 38886,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 130013852,
+    "blueprint_id": 60534,
+    "category_id": 2,
+    "game_id": 1,
+    "name": "Knight // Food Token",
+    "expansion": "Throne of Eldraine Promos",
+    "description": "Many JPN/T-Chinese for Sale! Check seller information about shipping.",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "jp",
+      "mtg_foil": true,
+      "signed": false,
+      "altered": false,
+      "collector_number": "T03/16",
+      "cmc": "",
+      "mtg_card_colors": ""
+    },
+    "buyer_price": {
+      "cents": 162,
+      "currency": "EUR"
+    },
+    "formatted_price": "€1.62",
+    "mkm_id": 405169,
+    "tcg_player_id": null,
+    "scryfall_id": null,
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-08-31T07:39:13.000Z",
+    "estimated_arrived_at": "2026-09-25T13:53:55.706Z",
+    "arrived_at": "2026-09-10T08:16:32.000Z",
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 111602005,
+    "quantity": {
+      "ok": 3
+    },
+    "seller": {
+      "id": 68970,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 415763524,
+    "blueprint_id": 390243,
+    "category_id": 2,
+    "game_id": 1,
+    "name": "Food",
+    "expansion": "CardTrader Tokens",
+    "description": "",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Special",
+      "condition": "Near Mint",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "",
+      "cmc": "",
+      "mtg_card_colors": "",
+      "artist": "Florinda Zanetti"
+    },
+    "buyer_price": {
+      "cents": 159,
+      "currency": "EUR"
+    },
+    "formatted_price": "€1.59",
+    "mkm_id": null,
+    "tcg_player_id": null,
+    "scryfall_id": null,
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-08-31T07:39:13.000Z",
+    "estimated_arrived_at": "2026-09-01T07:39:13.000Z",
+    "arrived_at": "2026-09-01T10:39:26.000Z",
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 111602006,
+    "quantity": {
+      "ok": 3
+    },
+    "seller": {
+      "id": 68970,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 440141414,
+    "blueprint_id": 390237,
+    "category_id": 2,
+    "game_id": 1,
+    "name": "Blood",
+    "expansion": "CardTrader Tokens",
+    "description": "",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Special",
+      "condition": "Moderately Played",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "",
+      "cmc": "",
+      "mtg_card_colors": "",
+      "artist": "Florinda Zanetti"
+    },
+    "buyer_price": {
+      "cents": 139,
+      "currency": "EUR"
+    },
+    "formatted_price": "€1.39",
+    "mkm_id": null,
+    "tcg_player_id": null,
+    "scryfall_id": null,
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-08-31T07:39:13.000Z",
+    "estimated_arrived_at": "2026-09-01T07:39:13.000Z",
+    "arrived_at": "2026-09-01T10:39:26.000Z",
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 111812158,
+    "quantity": {
+      "ok": 1
+    },
+    "seller": {
+      "id": 348470,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 448077108,
+    "blueprint_id": 26017,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Myr Enforcer",
+    "expansion": "Mirrodin",
+    "description": null,
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Slightly Played",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "211",
+      "cmc": "7.0",
+      "mtg_card_colors": "C",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 97,
+      "currency": "EUR"
+    },
+    "formatted_price": "€0.97",
+    "mkm_id": 211,
+    "tcg_player_id": 11522,
+    "scryfall_id": "eeeef899-a8b5-4416-a208-3bd5a0c7177b",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-01T20:33:34.000Z",
+    "estimated_arrived_at": "2026-09-25T13:53:55.708Z",
+    "arrived_at": "2026-09-21T08:40:05.000Z",
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 111812372,
+    "quantity": {
+      "ok": 4
+    },
+    "seller": {
+      "id": 21929,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 448249441,
+    "blueprint_id": 374839,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Utrom Monitor",
+    "expansion": "Commander: Teenage Mutant Ninja Turtles",
+    "description": null,
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "113",
+      "cmc": "5",
+      "mtg_card_colors": "U",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 1170,
+      "currency": "EUR"
+    },
+    "formatted_price": "€11.70",
+    "mkm_id": 873843,
+    "tcg_player_id": 679801,
+    "scryfall_id": "8ce6647c-343a-45e8-9b6e-0292ae01ec81",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-01T20:37:24.000Z",
+    "estimated_arrived_at": "2026-09-25T13:53:55.708Z",
+    "arrived_at": "2026-09-18T10:51:00.000Z",
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 111812373,
+    "quantity": {
+      "ok": 4
+    },
+    "seller": {
+      "id": 41,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 427217514,
+    "blueprint_id": 342498,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Great Furnace",
+    "expansion": "Commander: Edge of Eternities",
+    "description": null,
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "161",
+      "cmc": "0",
+      "mtg_card_colors": "L",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 406,
+      "currency": "EUR"
+    },
+    "formatted_price": "€4.06",
+    "mkm_id": 834302,
+    "tcg_player_id": 642853,
+    "scryfall_id": "74c5bb44-d72c-4c1a-a38f-86b4a8f49ae1",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-01T20:37:24.000Z",
+    "estimated_arrived_at": "2026-09-25T13:53:55.708Z",
+    "arrived_at": "2026-09-16T11:25:30.000Z",
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 113113698,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 97167,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 413334129,
+    "blueprint_id": 389390,
+    "category_id": 4,
+    "game_id": 1,
+    "name": "Reality Fracture Play Booster Box",
+    "expansion": "Reality Fracture",
+    "description": "",
+    "graded": false,
+    "properties": {
+      "mtg_language": "en"
+    },
+    "buyer_price": {
+      "cents": 12068,
+      "currency": "EUR"
+    },
+    "formatted_price": "€120.68",
+    "mkm_id": 885562,
+    "tcg_player_id": null,
+    "scryfall_id": null,
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-10T07:09:55.000Z",
+    "estimated_arrived_at": "2026-09-25T13:53:55.709Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065785,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 169527,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 451762423,
+    "blueprint_id": 144961,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Ichor Wellspring",
+    "expansion": "Double Masters",
+    "description": "TURBO SELLER! Shipments every 3 days to CardTrader! ;)",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "261",
+      "cmc": "2",
+      "mtg_card_colors": "C",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 149,
+      "currency": "EUR"
+    },
+    "formatted_price": "€1.49",
+    "mkm_id": 484549,
+    "tcg_player_id": 218826,
+    "scryfall_id": "6ce84c30-5d59-4f0d-af44-96b993f3902f",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-08T09:44:57.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065786,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 169527,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 451762423,
+    "blueprint_id": 144961,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Ichor Wellspring",
+    "expansion": "Double Masters",
+    "description": "TURBO SELLER! Shipments every 3 days to CardTrader! ;)",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "261",
+      "cmc": "2",
+      "mtg_card_colors": "C",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 149,
+      "currency": "EUR"
+    },
+    "formatted_price": "€1.49",
+    "mkm_id": 484549,
+    "tcg_player_id": 218826,
+    "scryfall_id": "6ce84c30-5d59-4f0d-af44-96b993f3902f",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-08T09:44:57.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065787,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 169527,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 451762743,
+    "blueprint_id": 1914,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Ichor Wellspring",
+    "expansion": "Duel Decks: Elves vs. Inventors",
+    "description": "Veloci come Fulmini! Fast as Lightning!",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "054",
+      "cmc": "2.0",
+      "mtg_card_colors": "C",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 119,
+      "currency": "EUR"
+    },
+    "formatted_price": "€1.19",
+    "mkm_id": 320662,
+    "tcg_player_id": 162853,
+    "scryfall_id": "537721ab-088f-4dbd-b984-67f68eaaf3cf",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-08T09:44:57.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065788,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 169527,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 451762743,
+    "blueprint_id": 1914,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Ichor Wellspring",
+    "expansion": "Duel Decks: Elves vs. Inventors",
+    "description": "Veloci come Fulmini! Fast as Lightning!",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "054",
+      "cmc": "2.0",
+      "mtg_card_colors": "C",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 119,
+      "currency": "EUR"
+    },
+    "formatted_price": "€1.19",
+    "mkm_id": 320662,
+    "tcg_player_id": 162853,
+    "scryfall_id": "537721ab-088f-4dbd-b984-67f68eaaf3cf",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-08T09:44:57.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065789,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 169527,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 451762896,
+    "blueprint_id": 266897,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Fanatical Offering",
+    "expansion": "The Lost Caverns of Ixalan",
+    "description": "Veloci come Fulmini! Fast as Lightning!",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "105",
+      "cmc": "2",
+      "mtg_card_colors": "B",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 279,
+      "currency": "EUR"
+    },
+    "formatted_price": "€2.79",
+    "mkm_id": 743994,
+    "tcg_player_id": 526191,
+    "scryfall_id": "d896dd52-b134-4b55-ab91-ccb05ecc50f4",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-08T09:44:57.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065790,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 169527,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 451762896,
+    "blueprint_id": 266897,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Fanatical Offering",
+    "expansion": "The Lost Caverns of Ixalan",
+    "description": "Veloci come Fulmini! Fast as Lightning!",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "105",
+      "cmc": "2",
+      "mtg_card_colors": "B",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 279,
+      "currency": "EUR"
+    },
+    "formatted_price": "€2.79",
+    "mkm_id": 743994,
+    "tcg_player_id": 526191,
+    "scryfall_id": "d896dd52-b134-4b55-ab91-ccb05ecc50f4",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-08T09:44:57.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065791,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 169527,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 451766027,
+    "blueprint_id": 17771,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Nihil Spellbomb",
+    "expansion": "Scars of Mirrodin",
+    "description": "TURBO SELLER! Shipments every 3 days to CardTrader! ;)",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Slightly Played",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "187",
+      "cmc": "1.0",
+      "mtg_card_colors": "C",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 529,
+      "currency": "EUR"
+    },
+    "formatted_price": "€5.29",
+    "mkm_id": 242830,
+    "tcg_player_id": 36518,
+    "scryfall_id": "603d217b-6375-46fc-992a-8dbd779da1e5",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-08T09:44:57.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065792,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 169527,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 451766027,
+    "blueprint_id": 17771,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Nihil Spellbomb",
+    "expansion": "Scars of Mirrodin",
+    "description": "TURBO SELLER! Shipments every 3 days to CardTrader! ;)",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Slightly Played",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "187",
+      "cmc": "1.0",
+      "mtg_card_colors": "C",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 529,
+      "currency": "EUR"
+    },
+    "formatted_price": "€5.29",
+    "mkm_id": 242830,
+    "tcg_player_id": 36518,
+    "scryfall_id": "603d217b-6375-46fc-992a-8dbd779da1e5",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-08T09:44:57.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065793,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 192000,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 454931177,
+    "blueprint_id": 212855,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Cast Down",
+    "expansion": "Commander Legends: Battle for Baldur's Gate",
+    "description": "",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Uncommon",
+      "condition": "Slightly Played",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "119",
+      "cmc": "2.0",
+      "mtg_card_colors": "B",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 224,
+      "currency": "EUR"
+    },
+    "formatted_price": "€2.24",
+    "mkm_id": 660726,
+    "tcg_player_id": 273128,
+    "scryfall_id": "aba79021-39af-4e74-beb5-f2f508c865b2",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-14T09:44:57.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065794,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 192000,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 454931177,
+    "blueprint_id": 212855,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Cast Down",
+    "expansion": "Commander Legends: Battle for Baldur's Gate",
+    "description": "",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Uncommon",
+      "condition": "Slightly Played",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "119",
+      "cmc": "2.0",
+      "mtg_card_colors": "B",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 224,
+      "currency": "EUR"
+    },
+    "formatted_price": "€2.24",
+    "mkm_id": 660726,
+    "tcg_player_id": 273128,
+    "scryfall_id": "aba79021-39af-4e74-beb5-f2f508c865b2",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-14T09:44:57.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065795,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 14640,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 453549778,
+    "blueprint_id": 212855,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Cast Down",
+    "expansion": "Commander Legends: Battle for Baldur's Gate",
+    "description": "Strict Grading ",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Uncommon",
+      "condition": "Slightly Played",
+      "mtg_language": "it",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "119",
+      "cmc": "2.0",
+      "mtg_card_colors": "B",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 244,
+      "currency": "EUR"
+    },
+    "formatted_price": "€2.44",
+    "mkm_id": 660726,
+    "tcg_player_id": 273128,
+    "scryfall_id": "aba79021-39af-4e74-beb5-f2f508c865b2",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-05T09:44:57.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065796,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 1068,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 151037333,
+    "blueprint_id": 19589,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Seat of the Synod",
+    "expansion": "Planechase",
+    "description": "",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "136",
+      "cmc": "0.0",
+      "mtg_card_colors": "L",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 207,
+      "currency": "EUR"
+    },
+    "formatted_price": "€2.07",
+    "mkm_id": 21585,
+    "tcg_player_id": 37430,
+    "scryfall_id": "12ad9074-3f5b-412c-b55d-4b0eedaf32f2",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-12T00:00:00.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065797,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 1068,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 151037333,
+    "blueprint_id": 19589,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Seat of the Synod",
+    "expansion": "Planechase",
+    "description": "",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "136",
+      "cmc": "0.0",
+      "mtg_card_colors": "L",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 207,
+      "currency": "EUR"
+    },
+    "formatted_price": "€2.07",
+    "mkm_id": 21585,
+    "tcg_player_id": 37430,
+    "scryfall_id": "12ad9074-3f5b-412c-b55d-4b0eedaf32f2",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-12T00:00:00.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065798,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 140817,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 454710297,
+    "blueprint_id": 156086,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Drossforge Bridge",
+    "expansion": "Modern Horizons 2",
+    "description": "",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "246",
+      "cmc": "0",
+      "mtg_card_colors": "L",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 184,
+      "currency": "EUR"
+    },
+    "formatted_price": "€1.84",
+    "mkm_id": 566277,
+    "tcg_player_id": 239716,
+    "scryfall_id": "5b46b8d8-723a-4752-b97d-29ef83bd294c",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-12T00:00:00.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065799,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 140817,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 454710297,
+    "blueprint_id": 156086,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Drossforge Bridge",
+    "expansion": "Modern Horizons 2",
+    "description": "",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "246",
+      "cmc": "0",
+      "mtg_card_colors": "L",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 184,
+      "currency": "EUR"
+    },
+    "formatted_price": "€1.84",
+    "mkm_id": 566277,
+    "tcg_player_id": 239716,
+    "scryfall_id": "5b46b8d8-723a-4752-b97d-29ef83bd294c",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-12T00:00:00.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065800,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 14263,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 452514091,
+    "blueprint_id": 156086,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Drossforge Bridge",
+    "expansion": "Modern Horizons 2",
+    "description": "",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Slightly Played",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "246",
+      "cmc": "0",
+      "mtg_card_colors": "L",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 203,
+      "currency": "EUR"
+    },
+    "formatted_price": "€2.03",
+    "mkm_id": 566277,
+    "tcg_player_id": 239716,
+    "scryfall_id": "5b46b8d8-723a-4752-b97d-29ef83bd294c",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-12T00:00:00.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065801,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 14263,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 452514091,
+    "blueprint_id": 156086,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Drossforge Bridge",
+    "expansion": "Modern Horizons 2",
+    "description": "",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Slightly Played",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "246",
+      "cmc": "0",
+      "mtg_card_colors": "L",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 203,
+      "currency": "EUR"
+    },
+    "formatted_price": "€2.03",
+    "mkm_id": 566277,
+    "tcg_player_id": 239716,
+    "scryfall_id": "5b46b8d8-723a-4752-b97d-29ef83bd294c",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-12T00:00:00.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065802,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 204305,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 416736189,
+    "blueprint_id": 156088,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Mistvault Bridge",
+    "expansion": "Modern Horizons 2",
+    "description": "NM ---- Mazinger Vigo ---- Daily Shipments",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "249",
+      "cmc": "0",
+      "mtg_card_colors": "L",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 85,
+      "currency": "EUR"
+    },
+    "formatted_price": "€0.85",
+    "mkm_id": 566275,
+    "tcg_player_id": 239718,
+    "scryfall_id": "9f36a6e2-3e51-4a30-a225-10cfe6650b9d",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-12T00:00:00.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065803,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 204305,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 416736189,
+    "blueprint_id": 156088,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Mistvault Bridge",
+    "expansion": "Modern Horizons 2",
+    "description": "NM ---- Mazinger Vigo ---- Daily Shipments",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "249",
+      "cmc": "0",
+      "mtg_card_colors": "L",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 85,
+      "currency": "EUR"
+    },
+    "formatted_price": "€0.85",
+    "mkm_id": 566275,
+    "tcg_player_id": 239718,
+    "scryfall_id": "9f36a6e2-3e51-4a30-a225-10cfe6650b9d",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-12T00:00:00.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065804,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 204305,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 416736189,
+    "blueprint_id": 156088,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Mistvault Bridge",
+    "expansion": "Modern Horizons 2",
+    "description": "NM ---- Mazinger Vigo ---- Daily Shipments",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "249",
+      "cmc": "0",
+      "mtg_card_colors": "L",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 85,
+      "currency": "EUR"
+    },
+    "formatted_price": "€0.85",
+    "mkm_id": 566275,
+    "tcg_player_id": 239718,
+    "scryfall_id": "9f36a6e2-3e51-4a30-a225-10cfe6650b9d",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-12T00:00:00.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065805,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 19506,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 453055435,
+    "blueprint_id": 342513,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Silverbluff Bridge",
+    "expansion": "Commander: Edge of Eternities",
+    "description": "Competitive prices, professional service, TCG passion.",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "180",
+      "cmc": "0",
+      "mtg_card_colors": "L",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 59,
+      "currency": "EUR"
+    },
+    "formatted_price": "€0.59",
+    "mkm_id": 834314,
+    "tcg_player_id": 642865,
+    "scryfall_id": "8f14540a-479f-4a3c-8e5b-f482caf48451",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-09T09:44:57.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065806,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 19506,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 453055435,
+    "blueprint_id": 342513,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Silverbluff Bridge",
+    "expansion": "Commander: Edge of Eternities",
+    "description": "Competitive prices, professional service, TCG passion.",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "180",
+      "cmc": "0",
+      "mtg_card_colors": "L",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 59,
+      "currency": "EUR"
+    },
+    "formatted_price": "€0.59",
+    "mkm_id": 834314,
+    "tcg_player_id": 642865,
+    "scryfall_id": "8f14540a-479f-4a3c-8e5b-f482caf48451",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-09T09:44:57.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065807,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 19506,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 453055435,
+    "blueprint_id": 342513,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Silverbluff Bridge",
+    "expansion": "Commander: Edge of Eternities",
+    "description": "Competitive prices, professional service, TCG passion.",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "180",
+      "cmc": "0",
+      "mtg_card_colors": "L",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 59,
+      "currency": "EUR"
+    },
+    "formatted_price": "€0.59",
+    "mkm_id": 834314,
+    "tcg_player_id": 642865,
+    "scryfall_id": "8f14540a-479f-4a3c-8e5b-f482caf48451",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-09T09:44:57.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065808,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 43540,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 455039918,
+    "blueprint_id": 197661,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Blood Fountain",
+    "expansion": "Innistrad: Crimson Vow",
+    "description": "",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "095",
+      "cmc": "1.0",
+      "mtg_card_colors": "B",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 96,
+      "currency": "EUR"
+    },
+    "formatted_price": "€0.96",
+    "mkm_id": 583550,
+    "tcg_player_id": 253719,
+    "scryfall_id": "dd03651e-ada0-41dc-8722-0eba476943e3",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-05T09:44:57.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065809,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 43540,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 455039918,
+    "blueprint_id": 197661,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Blood Fountain",
+    "expansion": "Innistrad: Crimson Vow",
+    "description": "",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "095",
+      "cmc": "1.0",
+      "mtg_card_colors": "B",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 96,
+      "currency": "EUR"
+    },
+    "formatted_price": "€0.96",
+    "mkm_id": 583550,
+    "tcg_player_id": 253719,
+    "scryfall_id": "dd03651e-ada0-41dc-8722-0eba476943e3",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-05T09:44:57.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065810,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 43540,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 455039918,
+    "blueprint_id": 197661,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Blood Fountain",
+    "expansion": "Innistrad: Crimson Vow",
+    "description": "",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "095",
+      "cmc": "1.0",
+      "mtg_card_colors": "B",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 96,
+      "currency": "EUR"
+    },
+    "formatted_price": "€0.96",
+    "mkm_id": 583550,
+    "tcg_player_id": 253719,
+    "scryfall_id": "dd03651e-ada0-41dc-8722-0eba476943e3",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-05T09:44:57.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065811,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 364406,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 429134972,
+    "blueprint_id": 203864,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Reckoner's Bargain",
+    "expansion": "Kamigawa: Neon Dynasty",
+    "description": "",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Slightly Played",
+      "mtg_language": "jp",
+      "mtg_foil": true,
+      "signed": false,
+      "altered": false,
+      "collector_number": "120",
+      "cmc": "2",
+      "mtg_card_colors": "B",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 460,
+      "currency": "EUR"
+    },
+    "formatted_price": "€4.60",
+    "mkm_id": 608223,
+    "tcg_player_id": 262771,
+    "scryfall_id": "6338942d-d650-4571-8ec6-4d658792c53e",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-12T00:00:00.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065812,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 18890,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 443981420,
+    "blueprint_id": 203864,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Reckoner's Bargain",
+    "expansion": "Kamigawa: Neon Dynasty",
+    "description": null,
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "en",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "120",
+      "cmc": "2",
+      "mtg_card_colors": "B",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 358,
+      "currency": "EUR"
+    },
+    "formatted_price": "€3.58",
+    "mkm_id": 608223,
+    "tcg_player_id": 262771,
+    "scryfall_id": "6338942d-d650-4571-8ec6-4d658792c53e",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-11-02T00:00:00.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065813,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 34195,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 453865221,
+    "blueprint_id": 203864,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Reckoner's Bargain",
+    "expansion": "Kamigawa: Neon Dynasty",
+    "description": "",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "it",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "120",
+      "cmc": "2",
+      "mtg_card_colors": "B",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 410,
+      "currency": "EUR"
+    },
+    "formatted_price": "€4.10",
+    "mkm_id": 608223,
+    "tcg_player_id": 262771,
+    "scryfall_id": "6338942d-d650-4571-8ec6-4d658792c53e",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-05T09:44:57.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  },
+  {
+    "id": 115065814,
+    "quantity": {
+      "pending": 1
+    },
+    "seller": {
+      "id": 34195,
+      "username": "[REDACTED]",
+      "email": "[REDACTED]",
+      "phone": "[REDACTED]"
+    },
+    "product_id": 453865221,
+    "blueprint_id": 203864,
+    "category_id": 1,
+    "game_id": 1,
+    "name": "Reckoner's Bargain",
+    "expansion": "Kamigawa: Neon Dynasty",
+    "description": "",
+    "graded": false,
+    "properties": {
+      "mtg_rarity": "Common",
+      "condition": "Near Mint",
+      "mtg_language": "it",
+      "mtg_foil": false,
+      "signed": false,
+      "altered": false,
+      "collector_number": "120",
+      "cmc": "2",
+      "mtg_card_colors": "B",
+      "tournament_legal": true
+    },
+    "buyer_price": {
+      "cents": 410,
+      "currency": "EUR"
+    },
+    "formatted_price": "€4.10",
+    "mkm_id": 608223,
+    "tcg_player_id": 262771,
+    "scryfall_id": "6338942d-d650-4571-8ec6-4d658792c53e",
+    "presale": null,
+    "presale_ended_at": null,
+    "paid_at": "2026-09-24T09:44:57.000Z",
+    "estimated_arrived_at": "2026-10-05T09:44:57.000Z",
+    "arrived_at": null,
+    "cancelled_at": null,
+    "return_to_seller": false
+  }
+]

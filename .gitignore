@@ -8,6 +8,9 @@ node_modules/
 npm-debug.log*
 yarn-error.log*
 
+# Local secrets (CardTrader API token, raw spike responses)
+.secrets/
+
 # Editor / OS
 .DS_Store
 *.swp
