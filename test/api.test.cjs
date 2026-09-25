@@ -2,7 +2,7 @@
 
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const { createClient, DEFAULT_BASE_URL } = require("../src/pkjs/api.js");
+const { createClient, isAllowedBaseUrl, DEFAULT_BASE_URL } = require("../src/pkjs/api.js");
 const { parseHeaders } = require("../src/pkjs/xhr-transport.js");
 
 function jsonResponse(status, body, headers) {
@@ -43,6 +43,27 @@ function build(responses, overrides) {
 	);
 	return { client, transport, sleeps };
 }
+
+test("only allows HTTPS, or loopback HTTP for the local mock", () => {
+	assert.equal(isAllowedBaseUrl("https://api.cardtrader.com/api/v2"), true);
+	assert.equal(isAllowedBaseUrl("HTTPS://API.CARDRADER.COM"), true);
+	assert.equal(isAllowedBaseUrl("http://127.0.0.1:8787/api/v2"), true);
+	assert.equal(isAllowedBaseUrl("http://localhost:8787/api/v2"), true);
+	assert.equal(isAllowedBaseUrl("http://[::1]:8787"), true);
+	assert.equal(isAllowedBaseUrl("http://evil.example.com/api/v2"), false);
+	assert.equal(isAllowedBaseUrl("ftp://example.com"), false);
+	assert.equal(isAllowedBaseUrl(""), false);
+	assert.equal(isAllowedBaseUrl(null), false);
+});
+
+test("refuses to send the token to a non-HTTPS endpoint", async () => {
+	const { client, transport } = build([jsonResponse(200, {})], { baseUrl: "http://evil.example.com/api/v2" });
+	const result = await client.getInfo();
+
+	assert.equal(result.ok, false);
+	assert.equal(result.error.code, "insecure_base_url");
+	assert.equal(transport.calls.length, 0);
+});
 
 test("getInfo returns parsed data and sends the bearer token", async () => {
 	const { client, transport } = build([jsonResponse(200, { id: 1, name: "app" })]);

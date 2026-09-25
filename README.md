@@ -106,6 +106,13 @@ so the app can be exercised end to end (list, detail, box and every error
 state) without the real API. See
 [its README](tools/mock-cardtrader/README.md).
 
+## Security and privacy
+
+The threat model and a short privacy note live in
+[docs/security.md](docs/security.md). In short: the token stays on the phone,
+the API client only talks HTTPS, and the watch receives normalized, non-secret
+data.
+
 ## Documentation
 
 - Alloy framework: <https://developer.repebble.com/guides/alloy/>

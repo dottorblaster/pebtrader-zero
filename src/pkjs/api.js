@@ -76,6 +76,18 @@ function retryAfterMs(response) {
 	return isFinite(seconds) && seconds >= 0 ? seconds * 1000 : null;
 }
 
+/**
+ * The bearer token must only ever go to an HTTPS endpoint. Plain HTTP is
+ * allowed only for loopback, so the local mock server
+ * (tools/mock-cardtrader) can be used during development.
+ */
+function isAllowedBaseUrl(url) {
+	if (typeof url !== "string") return false;
+	var lower = url.trim().toLowerCase();
+	if (lower.indexOf("https://") === 0) return true;
+	return /^http:\/\/(localhost|127\.0\.0\.1|\[::1\])(:\d+)?(\/|$)/.test(lower);
+}
+
 function createClient(options) {
 	options = options || {};
 	if (typeof options.transport !== "function") {
@@ -118,9 +130,22 @@ function createClient(options) {
 			});
 		}
 
+		var baseUrl = getBaseUrl();
+		if (!isAllowedBaseUrl(baseUrl)) {
+			return Promise.resolve({
+				ok: false,
+				status: 0,
+				retryable: false,
+				error: {
+					code: "insecure_base_url",
+					message: "Refusing to send the token to a non-HTTPS API endpoint.",
+				},
+			});
+		}
+
 		var requestOptions = {
 			method: method,
-			url: buildUrl(getBaseUrl(), path, query),
+			url: buildUrl(baseUrl, path, query),
 			headers: {
 				Authorization: "Bearer " + token,
 				Accept: "application/json",
@@ -219,5 +244,6 @@ function createClient(options) {
 
 module.exports = {
 	createClient: createClient,
+	isAllowedBaseUrl: isAllowedBaseUrl,
 	DEFAULT_BASE_URL: DEFAULT_BASE_URL,
 };
