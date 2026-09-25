@@ -6,10 +6,10 @@
  * heap cannot afford it).
  *
  * List item shape: { primary, secondary, value, action }.
- * `accent` optionally overrides the header colour (defaults to black).
+ * The header bar is always drawn in the CardTrader blue by the shell.
  */
 
-export function listScreen(title, items, hint, accent) {
+export function listScreen(title, items, hint) {
 	return {
 		kind: "list",
 		title: title,
@@ -17,30 +17,27 @@ export function listScreen(title, items, hint, accent) {
 		hint: hint || "",
 		index: 0,
 		offset: 0,
-		accent: accent || null,
 	};
 }
 
-export function statusScreen(title, message, hint, action, accent) {
+export function statusScreen(title, message, hint, action) {
 	return {
 		kind: "status",
 		title: title,
 		message: message || "",
 		hint: hint || "",
 		action: action || null,
-		accent: accent || null,
 	};
 }
 
 /** Scrollable list of display lines ({ t: text, h: heading }). */
-export function detailScreen(title, lines, hint, accent) {
+export function detailScreen(title, lines, hint) {
 	return {
 		kind: "detail",
 		title: title,
 		lines: lines || [],
 		hint: hint || "",
 		offset: 0,
-		accent: accent || null,
 	};
 }
 

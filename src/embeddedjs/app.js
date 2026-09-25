@@ -28,7 +28,7 @@ const black = render.makeColor(0, 0, 0);
 const white = render.makeColor(255, 255, 255);
 const gray = render.makeColor(120, 120, 120);
 const dark = render.makeColor(50, 50, 50);
-// CardTrader brand blue (#2AA8F8).
+// CardTrader brand blue (#2AA8F8) - the header bar on every screen.
 const brand = render.makeColor(0x2a, 0xa8, 0xf8);
 
 const ROUND = screen.width === screen.height;
@@ -206,7 +206,7 @@ class Shell {
 
 		const screen = this.nav.current;
 		if (screen) {
-			render.fillRectangle(screen.accent || black, 0, 0, render.width, HEADER_H);
+			render.fillRectangle(brand, 0, 0, render.width, HEADER_H);
 			const title = fitText(screen.title, fontHeader, render.width - SIDE_PAD * 2);
 			const titleWidth = render.getTextWidth(title, fontHeader);
 			render.drawText(title, fontHeader, white, (render.width - titleWidth) / 2, (HEADER_H - fontHeader.height) / 2);
@@ -308,13 +308,12 @@ class Shell {
 	 * screen becomes `loadingScreen`, so the response - when it finally arrives
 	 * - replaces it instead of being ignored.
 	 */
-	replaceWithRetry(title, action, accent) {
+	replaceWithRetry(title, action) {
 		const screen = statusScreen(
 			title,
 			"No response from your phone.\nPress select to retry.",
 			"Back to return",
-			action,
-			accent
+			action
 		);
 		this.loadingScreen = screen;
 		this.nav.replaceTop(screen);
@@ -335,7 +334,7 @@ class Shell {
 		if (kind === "box") {
 			if (this.boxText) return; // keep the cached box on screen
 			if (this.nav.current === this.loadingScreen) {
-				this.replaceWithRetry("CT0 box", () => this.request("box"), brand);
+				this.replaceWithRetry("CT0 box", () => this.request("box"));
 			}
 			return;
 		}
@@ -343,7 +342,7 @@ class Shell {
 		if (kind === "ct0") {
 			if (this.ct0Groups) return; // keep the cached groups on screen
 			if (this.nav.current === this.loadingScreen) {
-				this.replaceWithRetry("CT0 purchases", () => this.openCt0(true), brand);
+				this.replaceWithRetry("CT0 purchases", () => this.openCt0(true));
 			}
 			return;
 		}
@@ -351,7 +350,7 @@ class Shell {
 		if (kind === "ct0group") {
 			if (this.nav.current === this.loadingScreen) {
 				const key = pending.key;
-				this.replaceWithRetry("CT0", () => this.openCt0Group(key, true), brand);
+				this.replaceWithRetry("CT0", () => this.openCt0Group(key, true));
 			}
 			return;
 		}
@@ -425,7 +424,7 @@ class Shell {
 			if (this.nav.current === this.loadingScreen) {
 				this.loadingScreen = null;
 				this.nav.replaceTop(
-					statusScreen("CT0 box", message || "Could not load the box.", "Back to return", null, brand)
+					statusScreen("CT0 box", message || "Could not load the box.", "Back to return")
 				);
 				this.draw();
 			}
@@ -437,7 +436,7 @@ class Shell {
 			if (this.nav.current === this.loadingScreen) {
 				this.loadingScreen = null;
 				this.nav.replaceTop(
-					statusScreen("CT0 purchases", message || "Could not load your purchases.", "Back to return", null, brand)
+					statusScreen("CT0 purchases", message || "Could not load your purchases.", "Back to return")
 				);
 				this.draw();
 			}
@@ -448,7 +447,7 @@ class Shell {
 			if (this.nav.current === this.loadingScreen) {
 				this.loadingScreen = null;
 				this.nav.replaceTop(
-					statusScreen("CT0", message || "Could not load this group.", "Back to return", null, brand)
+					statusScreen("CT0", message || "Could not load this group.", "Back to return")
 				);
 				this.draw();
 			}
@@ -544,9 +543,9 @@ class Shell {
 	openBox() {
 		this.request("box");
 		const cached = this.boxText
-			? detailScreen("CT0 box", this.boxText.split("\n"), "Back to return", brand)
+			? detailScreen("CT0 box", this.boxText.split("\n"), "Back to return")
 			: null;
-		const screen = cached || statusScreen("CT0 box", "Loading\u2026", "Back to return", null, brand);
+		const screen = cached || statusScreen("CT0 box", "Loading\u2026", "Back to return");
 		this.loadingScreen = screen;
 		this.nav.push(screen);
 		this.draw();
@@ -560,7 +559,7 @@ class Shell {
 		this.boxText = text;
 		this.persist();
 		const lines = text.length ? text.split("\n") : [];
-		const screen = detailScreen("CT0 box", lines, "Back to return", brand);
+		const screen = detailScreen("CT0 box", lines, "Back to return");
 
 		if (this.nav.current === this.loadingScreen) {
 			this.loadingScreen = null;
@@ -579,7 +578,7 @@ class Shell {
 		this.request("ct0");
 		const screen = this.ct0Groups
 			? this.ct0Screen()
-			: statusScreen("CT0 purchases", "Loading\u2026", "Back to return", null, brand);
+			: statusScreen("CT0 purchases", "Loading\u2026", "Back to return");
 		this.loadingScreen = screen;
 		if (inPlace) this.nav.replaceTop(screen);
 		else this.nav.push(screen);
@@ -596,7 +595,7 @@ class Shell {
 	}
 
 	ct0Screen() {
-		return listScreen("CT0 purchases", this.ct0Rows(this.ct0Groups), "select: open", brand);
+		return listScreen("CT0 purchases", this.ct0Rows(this.ct0Groups), "select: open");
 	}
 
 	groupLabel(key) {
@@ -617,7 +616,7 @@ class Shell {
 
 		const screen = groups.length
 			? this.ct0Screen()
-			: statusScreen("CT0 purchases", "Your Zero box is empty.", REFRESH_HINT, () => this.openCt0(true), brand);
+			: statusScreen("CT0 purchases", "Your Zero box is empty.", REFRESH_HINT, () => this.openCt0(true));
 
 		if (this.nav.current === this.loadingScreen) {
 			this.loadingScreen = null;
@@ -630,7 +629,7 @@ class Shell {
 		if (!key) return;
 		this.request("ct0group", null, key);
 
-		const screen = statusScreen(this.groupLabel(key), "Loading\u2026", "Back to return", null, brand);
+		const screen = statusScreen(this.groupLabel(key), "Loading\u2026", "Back to return");
 		this.loadingScreen = screen;
 		if (inPlace) this.nav.replaceTop(screen);
 		else this.nav.push(screen);
@@ -644,7 +643,7 @@ class Shell {
 
 		const text = (payload && payload.text) || "";
 		const lines = text.length ? text.split("\n") : [];
-		const screen = detailScreen(this.groupLabel(key), lines, "Back to return", brand);
+		const screen = detailScreen(this.groupLabel(key), lines, "Back to return");
 
 		if (this.nav.current === this.loadingScreen) {
 			this.loadingScreen = null;
