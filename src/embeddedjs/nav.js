@@ -19,12 +19,13 @@ export function listScreen(title, items, hint) {
 	};
 }
 
-export function statusScreen(title, message, hint) {
+export function statusScreen(title, message, hint, action) {
 	return {
 		kind: "status",
 		title: title,
 		message: message || "",
 		hint: hint || "",
+		action: action || null,
 	};
 }
 

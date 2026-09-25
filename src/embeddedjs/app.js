@@ -4,10 +4,15 @@
  * Uses Poco (a single imperative renderer): the Moddable watch heap is tiny,
  * and a Piu content tree of text labels exhausts it. The logical screen stack
  * lives in nav.js; draw() renders the current screen.
+ *
+ * Requests go over AppMessage: the shell only sends once PKJS has made the
+ * channel writable, times out and retries slow responses, ignores responses it
+ * no longer needs, and keeps cached data rather than blanking the screen.
  */
 
 import Poco from "commodetto/Poco";
 import Button from "pebble/button";
+import Vibes from "pebble/vibes";
 import protocol from "./protocol";
 import { createMessenger } from "./messenger";
 import { Navigator, listScreen, statusScreen, detailScreen } from "./nav";
@@ -33,6 +38,9 @@ const VISIBLE_ROWS = ROUND ? 3 : 4;
 const REFRESH_HOLD_MS = 700;
 const REFRESH_HINT = "Hold select to refresh";
 const LIST_HINT = "hold: down box, select refresh";
+const RESPONSE_TIMEOUT_MS = 9000;
+const MAX_REQUEST_TRIES = 2;
+const RETRY_BASE_MS = 1000;
 
 function formatTime(date) {
 	const h = date.getHours();
@@ -80,8 +88,10 @@ class Shell {
 		this.updatedAt = null;
 		this.stale = false;
 		this.ready = false;
-		this.pendingDetail = false;
-		this.pendingBox = false;
+		this.pending = null;
+		this.loadingScreen = null;
+		this.responseTimer = null;
+		this.retryTimer = null;
 
 		this.button = new Button({
 			types: ["select", "up", "down", "back"],
@@ -104,6 +114,9 @@ class Shell {
 		// heap, so create them after the first frame has been drawn.
 		this.messenger = null;
 		this.startTimer = setTimeout(() => this.startMessaging(), 50);
+
+		this.wasConnected = false;
+		watch.addEventListener("connected", () => this.onConnected());
 		console.log("PebTrader Zero shell started");
 	}
 
@@ -115,26 +128,67 @@ class Shell {
 		});
 	}
 
-	startMessaging() {
-		this.startTimer = null;
-		this.messenger = createMessenger({
-			onReady: () => {
-				if (this.ready) return;
-				this.ready = true;
-				this.refresh();
-			},
-			onStatus: (status, code, message) => this.onStatus(status, code, message),
-			onOrders: payload => this.onOrders(payload),
-			onDetail: payload => this.onDetail(payload),
-			onBox: payload => this.onBox(payload),
-		});
+	// ---------------------------------------------------------------- requests
+
+	/** Queue a request; it is sent as soon as PKJS makes the channel writable. */
+	request(kind, id) {
+		const req = { kind: kind, id: id || null };
+
+		if (!this.ready || !this.messenger) {
+			this.queued = req;
+			return;
+		}
+
+		this.pending = req;
+		this.pending.tries = 0;
+		this.sendPending();
 	}
 
-	refresh() {
-		if (!this.ready || !this.messenger) return;
-		if (this.items.length === 0) this.showLoading();
-		this.messenger.requestRefresh();
+	sendPending() {
+		if (!this.messenger || !this.pending) return;
+		if (this.pending.kind === "detail") this.messenger.requestDetail(this.pending.id);
+		else if (this.pending.kind === "box") this.messenger.requestBox();
+		else this.messenger.requestRefresh();
+		this.armResponseTimer();
 	}
+
+	armResponseTimer() {
+		this.clearResponseTimer();
+		this.responseTimer = setTimeout(() => this.onResponseTimeout(), RESPONSE_TIMEOUT_MS);
+	}
+
+	clearResponseTimer() {
+		if (this.responseTimer) {
+			clearTimeout(this.responseTimer);
+			this.responseTimer = null;
+		}
+	}
+
+	onResponseTimeout() {
+		this.responseTimer = null;
+		if (!this.pending) return;
+
+		if (this.pending.tries < MAX_REQUEST_TRIES) {
+			const backoff = RETRY_BASE_MS * Math.pow(2, this.pending.tries);
+			this.pending.tries += 1;
+			this.retryTimer = setTimeout(() => {
+				this.retryTimer = null;
+				this.sendPending();
+			}, backoff);
+			return;
+		}
+
+		const kind = this.pending.kind;
+		this.pending = null;
+		this.showRequestError(kind);
+	}
+
+	completeRequest() {
+		this.pending = null;
+		this.clearResponseTimer();
+	}
+
+	// ------------------------------------------------------------------ screens
 
 	draw() {
 		render.begin();
@@ -205,6 +259,18 @@ class Shell {
 		this.draw();
 	}
 
+	showOffline() {
+		this.nav.reset(
+			statusScreen(
+				"Offline",
+				"Waiting for your phone\u2026\nKeep the Pebble app open.",
+				REFRESH_HINT,
+				() => this.refresh()
+			)
+		);
+		this.draw();
+	}
+
 	showError(code, message) {
 		let title = "Something went wrong";
 		let body = message || "Please try again.";
@@ -223,51 +289,155 @@ class Shell {
 			body = "Too many requests.\nTry again in a moment.";
 		}
 
-		this.nav.reset(statusScreen(title, body, REFRESH_HINT));
+		this.nav.reset(statusScreen(title, body, REFRESH_HINT, () => this.refresh()));
 		this.draw();
+	}
+
+	showRequestError(kind) {
+		if (kind === "detail") {
+			if (this.nav.current === this.loadingScreen) {
+				const orderId = this.loadingScreen.id;
+				this.loadingScreen = null;
+				this.nav.replaceTop(
+					statusScreen("Order", "No response from your phone.\nPress select to retry.", "Back to return", () =>
+						this.request("detail", orderId)
+					)
+				);
+				this.draw();
+			}
+			return;
+		}
+
+		if (kind === "box") {
+			if (this.boxText) return; // keep the cached box on screen
+			if (this.nav.current === this.loadingScreen) {
+				this.loadingScreen = null;
+				this.nav.replaceTop(
+					statusScreen("CT0 box", "No response from your phone.\nPress select to retry.", "Back to return", () =>
+						this.request("box")
+					)
+				);
+				this.draw();
+			}
+			return;
+		}
+
+		if (this.items.length > 0) {
+			this.stale = true;
+			this.showOrders();
+		} else {
+			this.showError(protocol.ERROR_CODES.NETWORK, "No response from your phone.");
+		}
 	}
 
 	showEmpty() {
 		this.nav.reset(
-			statusScreen("Orders", "No orders found.\nCheck the filters in the app settings.", REFRESH_HINT)
+			statusScreen("Orders", "No orders found.\nCheck the filters in the app settings.", REFRESH_HINT, () => this.refresh())
 		);
 		this.draw();
 	}
 
-	onStatus(status, code, message) {
-		if (status === protocol.STATUS.ERROR) {
-			if (this.pendingDetail || this.pendingBox) {
-				const box = this.pendingBox && this.boxText;
-				this.pendingDetail = false;
-				this.pendingBox = false;
-				if (box) return; // keep the cached box on screen
-				this.nav.replaceTop(statusScreen("Order", message || "Could not load this screen.", "Back to return"));
-				this.draw();
-			} else if (this.items.length > 0) {
-				// Keep the cached list rather than replacing it with an error.
-				this.stale = true;
-				this.showOrders();
-			} else {
-				this.showError(code, message);
+	// ------------------------------------------------------------------ responses
+
+	onConnected() {
+		const connected = !!(watch.connected && watch.connected.pebblekit);
+
+		if (connected) {
+			if (!this.wasConnected) {
+				this.wasConnected = true;
+				this.refresh();
 			}
+			return;
+		}
+
+		this.wasConnected = false;
+		this.completeRequest();
+		if (this.items.length === 0) this.showOffline();
+		else {
+			this.stale = true;
+			this.showOrders();
+		}
+	}
+
+	onStatus(status, code, message) {
+		if (status === protocol.STATUS.LOADING) return;
+
+		const pending = this.pending;
+		this.completeRequest();
+
+		if (status === protocol.STATUS.ERROR) {
+			this.onError(pending, code, message);
 		} else if (status === protocol.STATUS.OK && this.items.length === 0) {
 			this.showEmpty();
 		}
 	}
 
+	onError(pending, code, message) {
+		const kind = pending ? pending.kind : "orders";
+
+		if (kind === "detail") {
+			if (this.nav.current === this.loadingScreen) {
+				this.loadingScreen = null;
+				this.nav.replaceTop(
+					statusScreen("Order", message || "Could not load this order.", "Back to return")
+				);
+				this.draw();
+			}
+			return;
+		}
+
+		if (kind === "box") {
+			if (this.boxText) return; // keep the cached box
+			if (this.nav.current === this.loadingScreen) {
+				this.loadingScreen = null;
+				this.nav.replaceTop(
+					statusScreen("CT0 box", message || "Could not load the box.", "Back to return")
+				);
+				this.draw();
+			}
+			return;
+		}
+
+		if (this.items.length > 0) {
+			// Keep the cached list rather than replacing it with an error.
+			this.stale = true;
+			this.showOrders();
+		} else {
+			this.showError(code, message);
+		}
+	}
+
 	onOrders(payload) {
-		// Build the display rows and drop the raw order objects: the watch heap
-		// is tiny and keeping them leaves no room to open the detail screen.
+		if (!this.pending || this.pending.kind !== "orders") return; // ignore stale
+		this.completeRequest();
+
+		// Note any order whose state changed so we can buzz.
+		const previous = {};
+		this.items.forEach(item => {
+			if (item.id != null) previous[item.id] = item.primary;
+		});
+
 		const list = (payload && payload.orders) || [];
-		this.items = list.map(order => ({
+		const items = list.map(order => ({
 			id: order.id,
 			primary: protocol.orderStateLabel(order.state),
 			secondary: this.secondaryFor(order),
 			value: order.total || "",
 		}));
+
+		let changed = false;
+		items.forEach(item => {
+			if (item.id != null && previous[item.id] !== undefined && previous[item.id] !== item.primary) changed = true;
+		});
+
+		// Drop the raw order objects: the watch heap is tiny and keeping them
+		// leaves no room to open the detail screen.
+		this.items = items;
 		this.updatedAt = new Date();
 		this.stale = false;
 		this.persist();
+
+		if (changed) Vibes.doublePulse();
 
 		if (this.items.length === 0) this.showEmpty();
 		else this.showOrders();
@@ -287,42 +457,57 @@ class Shell {
 		return text;
 	}
 
+	// ------------------------------------------------------------------ detail/box
+
 	openDetail(orderId) {
 		if (!orderId) return;
-		this.pendingDetail = true;
-		this.nav.push(statusScreen("Order", "Loading\u2026", "Back to return"));
+		this.request("detail", orderId);
+		const screen = statusScreen("Order", "Loading\u2026", "Back to return");
+		screen.id = orderId;
+		this.loadingScreen = screen;
+		this.nav.push(screen);
 		this.draw();
-		if (this.messenger) this.messenger.requestDetail(orderId);
 	}
 
 	onDetail(payload) {
-		this.pendingDetail = false;
-		this.pendingBox = false;
+		if (!this.pending || this.pending.kind !== "detail") return; // ignore stale
+		this.completeRequest();
+
 		const text = (payload && payload.text) || "";
 		const lines = text.length ? text.split("\n") : [];
-		this.nav.replaceTop(detailScreen("Order", lines, "Back to return"));
-		this.draw();
+		const screen = detailScreen("Order", lines, "Back to return");
+
+		if (this.nav.current === this.loadingScreen) {
+			this.loadingScreen = null;
+			this.nav.replaceTop(screen);
+			this.draw();
+		}
 	}
 
 	openBox() {
-		this.pendingBox = true;
-		if (this.boxText) {
-			this.nav.push(detailScreen("CT0 box", this.boxText.split("\n"), "Back to return"));
-		} else {
-			this.nav.push(statusScreen("CT0 box", "Loading\u2026", "Back to return"));
-		}
+		this.request("box");
+		const cached = this.boxText ? detailScreen("CT0 box", this.boxText.split("\n"), "Back to return") : null;
+		const screen = cached || statusScreen("CT0 box", "Loading\u2026", "Back to return");
+		this.loadingScreen = screen;
+		this.nav.push(screen);
 		this.draw();
-		if (this.messenger) this.messenger.requestBox();
 	}
 
 	onBox(payload) {
-		this.pendingBox = false;
+		if (!this.pending || this.pending.kind !== "box") return; // ignore stale
+		this.completeRequest();
+
 		const text = (payload && payload.text) || "";
 		this.boxText = text;
 		this.persist();
 		const lines = text.length ? text.split("\n") : [];
-		this.nav.replaceTop(detailScreen("CT0 box", lines, "Back to return"));
-		this.draw();
+		const screen = detailScreen("CT0 box", lines, "Back to return");
+
+		if (this.nav.current === this.loadingScreen) {
+			this.loadingScreen = null;
+			this.nav.replaceTop(screen);
+			this.draw();
+		}
 	}
 
 	detailVisibleLines() {
@@ -349,6 +534,31 @@ class Shell {
 			const font = heading ? fontBold : fontRegular;
 			render.drawText(fitText(value, font, render.width - SIDE_PAD * 2), font, heading ? black : dark, SIDE_PAD, y);
 		}
+	}
+
+	// ------------------------------------------------------------------ input
+
+	startMessaging() {
+		this.startTimer = null;
+		this.messenger = createMessenger({
+			onReady: () => {
+				if (this.ready) return;
+				this.ready = true;
+				const queued = this.queued;
+				this.queued = null;
+				if (queued) this.request(queued.kind, queued.id);
+				else this.request("orders");
+			},
+			onStatus: (status, code, message) => this.onStatus(status, code, message),
+			onOrders: payload => this.onOrders(payload),
+			onDetail: payload => this.onDetail(payload),
+			onBox: payload => this.onBox(payload),
+		});
+	}
+
+	refresh() {
+		if (this.items.length === 0) this.showLoading();
+		this.request("orders");
 	}
 
 	onButton(down, type) {
@@ -414,9 +624,13 @@ class Shell {
 
 	onSelect() {
 		const screen = this.nav.current;
-		if (screen && screen.kind === "list") {
+		if (!screen) return;
+
+		if (screen.kind === "list") {
 			const item = screen.items[screen.index];
 			if (item) this.openDetail(item.id);
+		} else if (screen.action) {
+			screen.action();
 		}
 	}
 }
