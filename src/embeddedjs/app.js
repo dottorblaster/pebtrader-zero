@@ -30,14 +30,16 @@ const gray = render.makeColor(120, 120, 120);
 const dark = render.makeColor(50, 50, 50);
 
 const ROUND = screen.width === screen.height;
-const HEADER_H = ROUND ? 34 : 30;
-const ROW_H = 34;
+const HEADER_H = ROUND ? 32 : 30;
+const ROW_H = ROUND ? 30 : 34;
 const HINT_H = 18;
-const SIDE_PAD = ROUND ? 24 : 6;
+// Round displays clip the corners, so inset the content more.
+const SIDE_PAD = ROUND ? 34 : 6;
 const VISIBLE_ROWS = ROUND ? 3 : 4;
+const LIST_TOP = ROUND ? 8 : 2;
 const REFRESH_HOLD_MS = 700;
 const REFRESH_HINT = "Hold select to refresh";
-const LIST_HINT = "hold: down box, select refresh";
+const LIST_HINT = "hold select: refresh";
 const RESPONSE_TIMEOUT_MS = 9000;
 const MAX_REQUEST_TRIES = 2;
 const RETRY_BASE_MS = 1000;
@@ -226,7 +228,7 @@ class Shell {
 		for (let i = 0; i < VISIBLE_ROWS; i++) {
 			const item = screen.items[screen.offset + i];
 			if (!item) break;
-			const y = HEADER_H + 2 + i * ROW_H;
+			const y = HEADER_H + LIST_TOP + i * ROW_H;
 			const selected = screen.offset + i === screen.index;
 			if (selected) render.fillRectangle(black, SIDE_PAD - 4, y, render.width - 2 * (SIDE_PAD - 4), ROW_H);
 
@@ -512,14 +514,14 @@ class Shell {
 
 	detailVisibleLines() {
 		const lineHeight = fontRegular.height + 2;
-		const top = HEADER_H + 2;
+		const top = HEADER_H + LIST_TOP;
 		const bottom = render.height - HINT_H - (ROUND ? 22 : 0) - 2;
 		return Math.max(1, Math.floor((bottom - top) / lineHeight));
 	}
 
 	drawDetail(screen) {
 		const lineHeight = fontRegular.height + 2;
-		const top = HEADER_H + 2;
+		const top = HEADER_H + LIST_TOP;
 		const visible = this.detailVisibleLines();
 		const maxOffset = Math.max(0, screen.lines.length - visible);
 		if (screen.offset > maxOffset) screen.offset = maxOffset;
