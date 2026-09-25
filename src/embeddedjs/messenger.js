@@ -40,18 +40,31 @@ export function createMessenger(handlers) {
 		},
 	});
 
+	// The AppMessage outbox holds one message at a time. Writing while an earlier
+	// send is still in flight makes app_message_outbox_begin() fail, and the
+	// Moddable message module turns that into an uncaught error - which Alloy
+	// shows as a fatal crash. Report the failure instead so the shell can retry.
+	function write(dict) {
+		try {
+			message.write(dict);
+			return true;
+		} catch (e) {
+			return false;
+		}
+	}
+
 	return {
 		requestRefresh() {
-			message.write(new Map([["COMMAND", protocol.COMMANDS.REFRESH]]));
+			return write(new Map([["COMMAND", protocol.COMMANDS.REFRESH]]));
 		},
 		requestBox() {
-			message.write(new Map([["COMMAND", protocol.COMMANDS.GET_BOX]]));
+			return write(new Map([["COMMAND", protocol.COMMANDS.GET_BOX]]));
 		},
 		requestCt0() {
-			message.write(new Map([["COMMAND", protocol.COMMANDS.GET_CT0]]));
+			return write(new Map([["COMMAND", protocol.COMMANDS.GET_CT0]]));
 		},
 		requestCt0Group(key) {
-			message.write(
+			return write(
 				new Map([
 					["COMMAND", protocol.COMMANDS.GET_CT0_GROUP],
 					["CT0_GROUP", key],
@@ -59,7 +72,7 @@ export function createMessenger(handlers) {
 			);
 		},
 		requestDetail(orderId) {
-			message.write(
+			return write(
 				new Map([
 					["COMMAND", protocol.COMMANDS.GET_DETAIL],
 					["ORDER_ID", orderId],

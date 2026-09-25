@@ -45,6 +45,10 @@ const LIST_HINT = "hold select: refresh";
 const RESPONSE_TIMEOUT_MS = 9000;
 const MAX_REQUEST_TRIES = 2;
 const RETRY_BASE_MS = 1000;
+// The AppMessage outbox can still be busy from an earlier send; keep the retry
+// quick, but bounded, so a stuck outbox cannot spin forever.
+const WRITE_RETRY_MS = 300;
+const MAX_WRITE_TRIES = 5;
 
 function formatTime(date) {
 	const h = date.getHours();
@@ -97,6 +101,7 @@ class Shell {
 		this.loadingScreen = null;
 		this.responseTimer = null;
 		this.retryTimer = null;
+		this.writeTimer = null;
 
 		this.button = new Button({
 			types: ["select", "up", "down", "back"],
@@ -137,11 +142,17 @@ class Shell {
 
 	// ---------------------------------------------------------------- requests
 
-	/** Queue a request; it is sent as soon as PKJS makes the channel writable. */
+	/**
+	 * Queue a request; it is sent as soon as PKJS makes the channel writable.
+	 *
+	 * The AppMessage outbox only holds one message at a time, and writing while a
+	 * send is still in flight is a fatal error in the runtime - so never have two
+	 * requests outstanding. Anything that arrives meanwhile waits its turn.
+	 */
 	request(kind, id, key) {
 		const req = { kind: kind, id: id || null, key: key || null };
 
-		if (!this.ready || !this.messenger) {
+		if (!this.ready || !this.messenger || this.pending) {
 			this.queued = req;
 			return;
 		}
@@ -154,11 +165,27 @@ class Shell {
 	sendPending() {
 		if (!this.messenger || !this.pending) return;
 		const kind = this.pending.kind;
-		if (kind === "detail") this.messenger.requestDetail(this.pending.id);
-		else if (kind === "box") this.messenger.requestBox();
-		else if (kind === "ct0") this.messenger.requestCt0();
-		else if (kind === "ct0group") this.messenger.requestCt0Group(this.pending.key);
-		else this.messenger.requestRefresh();
+		let sent;
+
+		if (kind === "detail") sent = this.messenger.requestDetail(this.pending.id);
+		else if (kind === "box") sent = this.messenger.requestBox();
+		else if (kind === "ct0") sent = this.messenger.requestCt0();
+		else if (kind === "ct0group") sent = this.messenger.requestCt0Group(this.pending.key);
+		else sent = this.messenger.requestRefresh();
+
+		// Outbox still busy: this is a race, not a failure, so try again shortly
+		// rather than surfacing an error (or crashing).
+		if (!sent) {
+			this.pending.writeTries = (this.pending.writeTries || 0) + 1;
+			if (this.pending.writeTries <= MAX_WRITE_TRIES) {
+				this.writeTimer = setTimeout(() => {
+					this.writeTimer = null;
+					this.sendPending();
+				}, WRITE_RETRY_MS);
+				return;
+			}
+		}
+
 		this.armResponseTimer();
 	}
 
@@ -171,6 +198,10 @@ class Shell {
 		if (this.responseTimer) {
 			clearTimeout(this.responseTimer);
 			this.responseTimer = null;
+		}
+		if (this.writeTimer) {
+			clearTimeout(this.writeTimer);
+			this.writeTimer = null;
 		}
 	}
 
@@ -196,6 +227,13 @@ class Shell {
 	completeRequest() {
 		this.pending = null;
 		this.clearResponseTimer();
+
+		// A request that arrived while that one was in flight goes out now.
+		const queued = this.queued;
+		if (queued) {
+			this.queued = null;
+			this.request(queued.kind, queued.id, queued.key);
+		}
 	}
 
 	// ------------------------------------------------------------------ screens
@@ -378,7 +416,9 @@ class Shell {
 		if (connected) {
 			if (!this.wasConnected) {
 				this.wasConnected = true;
-				this.refresh();
+				// `onReady` already asks for the orders; don't stack a second write
+				// on top of it (the outbox only holds one message).
+				if (!this.pending) this.refresh();
 			}
 			return;
 		}
