@@ -51,6 +51,7 @@
 					"CHUNK_INDEX",
 					"CHUNK_COUNT",
 					"DATA",
+					"API_BASE",
 				];
 			case "COMMANDS":
 				return { REFRESH: 1, GET_ORDERS: 2, GET_DETAIL: 3, GET_BOX: 4 };

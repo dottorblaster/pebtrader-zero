@@ -83,7 +83,9 @@ function createClient(options) {
 	}
 
 	var transport = options.transport;
-	var baseUrl = options.baseUrl || DEFAULT_BASE_URL;
+	var getBaseUrl = options.getBaseUrl || function () {
+		return options.baseUrl || DEFAULT_BASE_URL;
+	};
 	var getToken = options.getToken || function () { return ""; };
 	var timeoutMs = options.timeoutMs || DEFAULT_TIMEOUT_MS;
 	var maxRetries = options.maxRetries == null ? DEFAULT_MAX_RETRIES : options.maxRetries;
@@ -118,7 +120,7 @@ function createClient(options) {
 
 		var requestOptions = {
 			method: method,
-			url: buildUrl(baseUrl, path, query),
+			url: buildUrl(getBaseUrl(), path, query),
 			headers: {
 				Authorization: "Bearer " + token,
 				Accept: "application/json",

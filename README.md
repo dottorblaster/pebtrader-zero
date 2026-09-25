@@ -95,6 +95,17 @@ wscript                        Build rules - usually no need to edit
 Alloy apps have two JavaScript environments: `embeddedjs` runs on the watch,
 `pkjs` runs on the connected phone.
 
+## Testing
+
+```sh
+npm test    # unit tests, no watch or network needed
+```
+
+`tools/mock-cardtrader` runs a local server that serves the sanitized fixtures,
+so the app can be exercised end to end (list, detail, box and every error
+state) without the real API. See
+[its README](tools/mock-cardtrader/README.md).
+
 ## Documentation
 
 - Alloy framework: <https://developer.repebble.com/guides/alloy/>

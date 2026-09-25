@@ -42,7 +42,8 @@
       "SEQ",
       "CHUNK_INDEX",
       "CHUNK_COUNT",
-      "DATA"
+      "DATA",
+      "API_BASE"
     ],
     "resources": {
       "media": []

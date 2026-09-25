@@ -7,6 +7,7 @@
  */
 
 var TOKEN_KEY = "cardtrader-token";
+var API_BASE_KEY = "cardtrader-api-base";
 var CLAY_SETTINGS_KEY = "clay-settings";
 
 function readClaySettings() {
@@ -29,6 +30,19 @@ function setToken(token) {
 	}
 }
 
+/** Advanced override; empty means the real CardTrader API. */
+function getApiBase() {
+	return localStorage.getItem(API_BASE_KEY) || "";
+}
+
+function setApiBase(url) {
+	if (url) {
+		localStorage.setItem(API_BASE_KEY, url);
+	} else {
+		localStorage.removeItem(API_BASE_KEY);
+	}
+}
+
 function getPreferences() {
 	var stored = readClaySettings();
 	return {
@@ -41,5 +55,7 @@ function getPreferences() {
 module.exports = {
 	getToken: getToken,
 	setToken: setToken,
+	getApiBase: getApiBase,
+	setApiBase: setApiBase,
 	getPreferences: getPreferences,
 };

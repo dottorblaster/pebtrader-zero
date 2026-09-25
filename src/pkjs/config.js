@@ -86,6 +86,26 @@ module.exports = [
 		],
 	},
 	{
+		type: "section",
+		items: [
+			{
+				type: "heading",
+				defaultValue: "Advanced",
+			},
+			{
+				type: "input",
+				messageKey: "API_BASE",
+				label: "API base URL (optional)",
+				description:
+					"Leave empty for CardTrader. Point this at tools/mock-cardtrader for offline testing.",
+				attributes: {
+					placeholder: "https://api.cardtrader.com/api/v2",
+					autocomplete: "off",
+				},
+			},
+		],
+	},
+	{
 		type: "submit",
 		id: "submit",
 		defaultValue: "Save settings",

@@ -23,15 +23,19 @@ function splitSettings(rawSettings, prepareSettingsForAppMessage, apiTokenKey) {
 	var tokenValue = raw.API_TOKEN && raw.API_TOKEN.value;
 	var token = tokenValue == null ? "" : String(tokenValue).trim();
 
-	// The token must never reach the watch.
+	var baseValue = raw.API_BASE && raw.API_BASE.value;
+	var apiBase = baseValue == null ? "" : String(baseValue).trim();
+
+	// Neither secret reaches the watch.
 	delete raw.API_TOKEN;
+	delete raw.API_BASE;
 
 	var watchDict = prepareSettingsForAppMessage(raw);
 	if (watchDict && apiTokenKey !== undefined) {
 		delete watchDict[apiTokenKey];
 	}
 
-	return { token: token, watchDict: watchDict };
+	return { token: token, apiBase: apiBase, watchDict: watchDict };
 }
 
 module.exports = {

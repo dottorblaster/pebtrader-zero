@@ -34,6 +34,18 @@ test("extracts the token and strips it from the watch dict", () => {
 	assert.equal(JSON.stringify(watchDict).includes("secret-token"), false);
 });
 
+test("extracts the optional API base and strips it from the watch dict", () => {
+	const raw = {
+		API_BASE: { value: "  http://127.0.0.1:8787/api/v2  " },
+		ROLE: { value: "buyer" },
+	};
+	const { apiBase, watchDict } = splitSettings(raw, prepare, KEYS.API_TOKEN);
+
+	assert.equal(apiBase, "http://127.0.0.1:8787/api/v2");
+	assert.equal("API_BASE" in watchDict, false);
+	assert.equal(watchDict[KEYS.ROLE], "buyer");
+});
+
 test("tolerates a missing token", () => {
 	const { token, watchDict } = splitSettings({ ROLE: { value: "both" } }, prepare, KEYS.API_TOKEN);
 	assert.equal(token, "");
