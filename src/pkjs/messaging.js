@@ -13,6 +13,7 @@
  */
 
 var protocol = require("../common/protocol");
+var sendQueue = require("./send-queue");
 var client = require("./client");
 var settings = require("./settings");
 var orders = require("./orders");
@@ -20,45 +21,18 @@ var ct0 = require("./ct0");
 
 var seq = 0;
 
-/*
- * All sends go through one queue: AppMessage drops messages sent while a
- * previous one is still in flight, and PKJS may need a couple of tries before
- * the channel is ready.
- */
-var queue = [];
-var pumping = false;
-var MAX_TRIES = 3;
-// The watch defers onReadable by a tick and overwrites an unread message, so
-// pace the sends or back-to-back chunks get lost.
-var PUMP_DELAY_MS = 80;
+// All sends go through one serialized, paced queue (see send-queue.js).
+var queue = sendQueue.createSendQueue({
+	send: function (dict, onSuccess, onFailure) {
+		Pebble.sendAppMessage(dict, onSuccess, onFailure);
+	},
+	schedule: function (callback, ms) {
+		setTimeout(callback, ms);
+	},
+});
 
 function enqueue(dict) {
-	queue.push({ dict: dict, tries: 0 });
-	pump();
-}
-
-function pump() {
-	if (pumping || queue.length === 0) return;
-	pumping = true;
-	var item = queue.shift();
-
-	Pebble.sendAppMessage(
-		item.dict,
-		function () {
-			pumping = false;
-			setTimeout(pump, PUMP_DELAY_MS);
-		},
-		function () {
-			pumping = false;
-			item.tries += 1;
-			if (item.tries <= MAX_TRIES) {
-				queue.unshift(item);
-				setTimeout(pump, 300);
-			} else {
-				pump();
-			}
-		}
-	);
+	queue.enqueue(dict);
 }
 
 function sendStatus(status, errorCode, message) {

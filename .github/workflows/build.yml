@@ -1,4 +1,4 @@
-name: Build
+name: CI
 
 on:
   push:
@@ -62,6 +62,9 @@ jobs:
 
       - name: Install npm dependencies
         run: npm ci
+
+      - name: Run tests
+        run: npm test
 
       - name: Build
         run: pebble build

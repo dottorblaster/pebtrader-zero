@@ -119,6 +119,8 @@ test("fetchCt0Box normalizes and propagates errors", async () => {
 	const ok = await ct0.fetchCt0Box(okClient);
 	assert.equal(ok.ok, true);
 	assert.equal(ok.data.itemCount, 41);
+	assert.ok(Array.isArray(ok.lines));
+	assert.equal(typeof ok.payload.text, "string");
 
 	const errClient = {
 		getCt0BoxItems: () =>

@@ -114,6 +114,7 @@ test("fetchOrderDetail builds lines via getOrder", async () => {
 	assert.equal(result.data.id, 38985298);
 	assert.ok(Array.isArray(result.lines));
 	assert.ok(result.lines.length > 0);
+	assert.equal(typeof result.payload.text, "string");
 });
 
 test("fetchOrders passes filters to the client and normalizes", async () => {
