@@ -52,6 +52,11 @@ More flags are passed straight through:
 store/publish.sh --is-published --release-notes "Add the CT0 box screen."
 ```
 
+The script always uploads the full screenshot set and passes
+`--replace-screenshots`, so re-publishing refreshes the listing instead of
+appending duplicate images. (The flag is ignored on the very first publish,
+when the app is created with the screenshots.)
+
 > If you run `pebble publish` **without** `--non-interactive` it ignores the
 > `--icon-*`/`--screenshots` flags and prompts instead. When it asks
 > *"Do you have app icons already…"*, choose **1** and give it

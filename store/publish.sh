@@ -14,6 +14,10 @@
 # Runs non-interactively so the icons, screenshots and description below are
 # actually used (an interactive `pebble publish` ignores those flags and
 # prompts instead). The first run creates the app; later runs add a release.
+#
+# --replace-screenshots: this repo holds the full screenshot set, so each
+# publish replaces the store's screenshots instead of appending duplicates.
+# (Ignored on the very first publish, when the app is created.)
 
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -31,5 +35,6 @@ pebble publish \
   --icon-small store/icon-small.png \
   --icon-large store/icon-large.png \
   --screenshots store/emery_*.png store/gabbro_*.png \
+  --replace-screenshots \
   "${CATEGORY_FLAG[@]}" \
   "$@"
