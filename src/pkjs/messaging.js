@@ -142,12 +142,30 @@ function wake() {
 	}, 2000);
 }
 
+var refreshTimer = null;
+
+/** Re-arm the auto-refresh timer from the current preferences. */
+function scheduleAutoRefresh() {
+	if (refreshTimer) {
+		clearInterval(refreshTimer);
+		refreshTimer = null;
+	}
+	var minutes = settings.getPreferences().refreshMinutes;
+	if (minutes > 0) {
+		refreshTimer = setInterval(refreshOrders, minutes * 60000);
+	}
+}
+
 function start() {
-	Pebble.addEventListener("ready", wake);
+	Pebble.addEventListener("ready", function () {
+		wake();
+		scheduleAutoRefresh();
+	});
 	Pebble.addEventListener("appmessage", onAppMessage);
 }
 
 module.exports = {
 	start: start,
 	refreshOrders: refreshOrders,
+	reconfigure: scheduleAutoRefresh,
 };

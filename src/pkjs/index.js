@@ -46,6 +46,7 @@ Pebble.addEventListener("webviewclosed", function (e) {
 
 	settings.setToken(split.token);
 	settings.setApiBase(split.apiBase);
+	messaging.reconfigure();
 
 	// Only non-secret settings are ever sent to the watch.
 	Pebble.sendAppMessage(
