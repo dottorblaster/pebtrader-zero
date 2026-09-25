@@ -38,6 +38,7 @@ they match `protocol.MESSAGE_KEYS`).
 | `CHUNK_INDEX` | phone -> watch | int | 0-based chunk index |
 | `CHUNK_COUNT` | phone -> watch | int | total chunks in this stream |
 | `DATA` | phone -> watch | string | JSON text chunk |
+| `CT0_GROUP` | watch -> phone | string | which CT0 group to fetch (`ok` / `pending` / `missing`) |
 
 ## Commands (watch -> phone)
 
@@ -47,6 +48,8 @@ they match `protocol.MESSAGE_KEYS`).
 | `GET_ORDERS` | 2 | fetch orders only |
 | `GET_DETAIL` | 3 | fetch one order (`ORDER_ID`) |
 | `GET_BOX` | 4 | fetch the CT0 box only |
+| `GET_CT0` | 5 | fetch the CT0 group rows (ready / on the way / missing) |
+| `GET_CT0_GROUP` | 6 | fetch one CT0 group's items (`CT0_GROUP`) |
 
 ## Payload types (phone -> watch)
 
@@ -56,6 +59,8 @@ they match `protocol.MESSAGE_KEYS`).
 | `ORDERS` | 11 | `{ orders: [summary...] }` |
 | `ORDER_DETAIL` | 12 | `{ text }` (pre-formatted lines) |
 | `BOX` | 13 | `{ text }` (pre-formatted lines) |
+| `CT0_GROUPS` | 14 | `{ groups: [{ key, label, secondary, value }] }` |
+| `CT0_GROUP` | 15 | `{ text }` (pre-formatted lines) |
 
 ## Status and errors
 
@@ -111,6 +116,7 @@ corrupt a fresh one. `decodePayload` then parses the JSON.
 | --- | --- |
 | `ORDERS` | 12 order summaries per `ORDERS` payload |
 | `BOX_ITEMS` | 12 box items per `BOX` payload |
+| `CT0_GROUP_ITEMS` | 40 items per `CT0_GROUP` payload |
 | `DETAIL_ITEMS` | 12 items per order detail |
 | `PAYLOAD_BYTES` | 8192 bytes per reassembled payload |
 
@@ -133,10 +139,15 @@ fields a list row needs for each order (`orders.toWatchList`):
 
 The `ORDERS` payload body is `{ orders: [...], total }`.
 
-The `ORDER_DETAIL` and `BOX` payload bodies are `{ text }`: pre-formatted
-display lines joined with `\n`, where a heading line is prefixed with `\u0001`.
-PKJS does the formatting so the watch only has to split a string and draw it
-(the watch heap cannot hold N line objects).
+The `ORDER_DETAIL`, `BOX` and `CT0_GROUP` payload bodies are `{ text }`:
+pre-formatted display lines joined with `\n`, where a heading line is prefixed
+with `\u0001`. PKJS does the formatting so the watch only has to split a string
+and draw it (the watch heap cannot hold N line objects).
+
+The `CT0_GROUPS` payload is the only list payload that arrives pre-formatted:
+each row already carries its label, unit count and value, so the watch never
+formats money or dates (`ct0.groupRows` in PKJS). Selecting a row sends
+`GET_CT0_GROUP` with that row's `key`.
 
 ## Example flow
 
@@ -148,4 +159,8 @@ watch  <--{ TYPE: ORDERS,  SEQ: 1, CHUNK_INDEX: 1, ...}--  phone
 watch  <--{ TYPE: BOX,     SEQ: 2, CHUNK_INDEX: 0, ...}--  phone
 watch  --{ COMMAND: GET_DETAIL, ORDER_ID: 38985298 }-->   phone
 watch  <--{ TYPE: ORDER_DETAIL, SEQ: 3, ... }--           phone
+watch  --{ COMMAND: GET_CT0 }-->                         phone
+watch  <--{ TYPE: CT0_GROUPS, SEQ: 4, ... }--             phone
+watch  --{ COMMAND: GET_CT0_GROUP, CT0_GROUP: "pending" }--> phone
+watch  <--{ TYPE: CT0_GROUP, SEQ: 5, ... }--              phone
 ```

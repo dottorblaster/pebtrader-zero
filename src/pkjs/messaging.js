@@ -116,6 +116,32 @@ function refreshBox() {
 	});
 }
 
+function refreshCt0Groups() {
+	sendStatus(protocol.STATUS.LOADING);
+
+	ct0.fetchCt0Groups(client, { maxItems: protocol.LIMITS.BOX_ITEMS }).then(function (result) {
+		if (!result.ok) {
+			sendStatus(protocol.STATUS.ERROR, protocol.errorCodeFromApi(result.error.code), result.error.message);
+			return;
+		}
+		sendPayload(protocol.TYPES.CT0_GROUPS, result.payload);
+		sendStatus(protocol.STATUS.OK);
+	});
+}
+
+function refreshCt0Group(state) {
+	sendStatus(protocol.STATUS.LOADING);
+
+	ct0.fetchCt0Group(client, state, { maxItems: protocol.LIMITS.CT0_GROUP_ITEMS }).then(function (result) {
+		if (!result.ok) {
+			sendStatus(protocol.STATUS.ERROR, protocol.errorCodeFromApi(result.error.code), result.error.message);
+			return;
+		}
+		sendPayload(protocol.TYPES.CT0_GROUP, result.payload);
+		sendStatus(protocol.STATUS.OK);
+	});
+}
+
 function onAppMessage(e) {
 	var payload = (e && e.payload) || {};
 	var command = payload.COMMAND;
@@ -126,6 +152,11 @@ function onAppMessage(e) {
 		if (orderId) refreshDetail(orderId);
 	} else if (command === protocol.COMMANDS.GET_BOX) {
 		refreshBox();
+	} else if (command === protocol.COMMANDS.GET_CT0) {
+		refreshCt0Groups();
+	} else if (command === protocol.COMMANDS.GET_CT0_GROUP) {
+		var state = payload.CT0_GROUP;
+		if (state) refreshCt0Group(state);
 	}
 }
 

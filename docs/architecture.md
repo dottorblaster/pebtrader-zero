@@ -23,7 +23,8 @@ CardTrader API --HTTPS--> PKJS (api.js -> orders.js / ct0.js)
 
 1. PKJS sends a small wake message on `ready`; that is what makes the
    AppMessage channel writable on the watch.
-2. The watch sends a `COMMAND` (`REFRESH`, `GET_DETAIL` or `GET_BOX`).
+2. The watch sends a `COMMAND` (`REFRESH`, `GET_DETAIL`, `GET_BOX`, `GET_CT0`
+   or `GET_CT0_GROUP`).
 3. PKJS fetches from CardTrader, normalizes the data and formats it for display.
 4. PKJS serializes the payload to JSON, splits it into ~800-byte chunks and
    sends them one at a time (paced), because AppMessage drops messages sent
@@ -40,7 +41,7 @@ See [protocol.md](protocol.md) for the wire contract and
 | `GET /info` | Token validation (config page and API client) |
 | `GET /orders` | Order list (`order_as`, `sort=date.desc`, `limit`) |
 | `GET /orders/:id` | Order detail |
-| `GET /ct0_box_items` | CardTrader Zero box |
+| `GET /ct0_box_items` | CardTrader Zero box and the CT0 purchases groups |
 
 Documented global rate limit: **200 requests / 10 s**. The client spaces
 requests by at least 50 ms (`minIntervalMs`) and backs off on 429/5xx, honouring
@@ -53,9 +54,19 @@ exhausted it. The UI uses Poco — one renderer, imperative drawing, a fixed
 screen buffer — and the shared protocol tables are built lazily.
 
 **A raised C heap.** `src/c/mdbl.c` passes a `ModdableCreationRecord` with a
-larger slot/chunk heap. The firmware default was too small for the message
-layer plus a parsed order list (and the firmware requires all of
-stack/slot/chunk to be non-zero).
+larger chunk heap: the firmware default was too small for the message layer
+plus a parsed order list (and the firmware requires all of stack/slot/chunk to
+be non-zero).
+
+**App RAM is one budget.** The JS heaps in `src/c/mdbl.c` and the AppMessage
+buffers in `src/embeddedjs/messenger.js` come out of the same app RAM. The
+`Message` module opens the channel with the platform maximum buffers (8.2 KB
+each) if left alone, which starves the firmware heap and makes
+`app_message_open` fail - the app then faults while creating the machine, with
+an unhelpful `PC: 0`. Sizing the buffers to what the app actually exchanges
+(outbound commands are a few dozen bytes; inbound payloads arrive chunked at
+`protocol.CHUNK_SIZE`) frees several KB and is what lets the chunk heap grow.
+Change either side and re-test a real launch on emery and gabbro.
 
 **Two module systems.** PKJS is CommonJS and the watch is ESM; neither can
 import the other's module object. Files in `src/common/` are UMD-ish
@@ -64,8 +75,10 @@ themselves on `globalThis` for the watch. `src/embeddedjs/protocol.js`
 re-exports the shared protocol as ESM.
 
 **Formatting on the phone.** The watch receives pre-formatted display strings
-(orders list projection, detail/box lines) rather than rich objects, keeping
-its heap small.
+(orders list projection, detail/box/group lines) rather than rich objects,
+keeping its heap small. The CT0 drill-down uses one line per purchase for the
+same reason. The CT0 group rows are the exception: they are pre-formatted
+*rows* because the watch has no money or date formatting.
 
 ## Source map
 
@@ -80,7 +93,7 @@ src/pkjs/index.js            Clay config + webviewclosed
 src/pkjs/api.js              pure API client (injectable transport)
 src/pkjs/client.js           client wired to settings + XMLHttpRequest
 src/pkjs/orders.js           order fetch + normalize + formatting
-src/pkjs/ct0.js              CT0 box fetch + normalize + formatting
+src/pkjs/ct0.js              CT0 box + purchases fetch, normalize, formatting
 src/pkjs/messaging.js        COMMAND handling, chunked sends
 src/pkjs/send-queue.js       serialized, paced, retrying send queue
 src/common/protocol.js       message keys, domain model, chunk codec

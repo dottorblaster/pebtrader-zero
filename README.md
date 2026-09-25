@@ -5,16 +5,16 @@
 A PebbleOS (Alloy) watch app to view the state of your
 [CardTrader Zero](https://www.cardtrader.com/) orders, right on your wrist.
 
-| Orders | Order detail | CardTrader Zero box |
-| --- | --- | --- |
-| ![Order list](docs/images/order-list.png) | ![Order detail](docs/images/order-detail.png) | ![CT0 box](docs/images/ct0-box.png) |
+| Orders | Order detail | CardTrader Zero box | CT0 purchases |
+| --- | --- | --- | --- |
+| ![Order list](docs/images/order-list.png) | ![Order detail](docs/images/order-detail.png) | ![CT0 box](docs/images/ct0-box.png) | ![CT0 purchases](docs/images/ct0-purchases.png) |
 
 The watch UI is JavaScript with the [Alloy](https://developer.repebble.com/guides/alloy/)
 framework (Moddable XS). CardTrader API calls run on the phone in PebbleKit JS,
 so your API token never leaves the phone.
 
 > **Status:** feature-complete for v0.1 — order list, order detail, CT0 box,
-> settings and an offline cache. See the
+> CT0 purchases, settings and an offline cache. See the
 > [issues](https://github.com/dottorblaster/pebtrader-zero/issues) for what's next.
 
 ## Target platforms
@@ -89,6 +89,7 @@ The default screen is your order list.
 | Back | Go back (press and hold to exit) |
 | Hold Select | Refresh |
 | Hold Down | Open the CardTrader Zero box |
+| Hold Up | Open CT0 purchases, split into ready to ship / on the way |
 
 The last snapshot is cached on the watch, so the list is shown instantly on
 launch and still appears (marked **cached** in the header) when the phone is

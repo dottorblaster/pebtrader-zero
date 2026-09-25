@@ -89,6 +89,7 @@ class Shell {
 		this.nav = new Navigator();
 		this.items = [];
 		this.boxText = null;
+		this.ct0Groups = null;
 		this.updatedAt = null;
 		this.stale = false;
 		this.ready = false;
@@ -107,6 +108,7 @@ class Shell {
 		if (cached && cached.items.length) {
 			this.items = cached.items;
 			this.boxText = cached.box || null;
+			this.ct0Groups = cached.ct0 || null;
 			this.updatedAt = cached.at ? new Date(cached.at) : null;
 			this.stale = true;
 			this.showOrders();
@@ -128,6 +130,7 @@ class Shell {
 		saveSnapshot({
 			items: this.items,
 			box: this.boxText || null,
+			ct0: this.ct0Groups || null,
 			at: this.updatedAt ? this.updatedAt.getTime() : null,
 		});
 	}
@@ -135,8 +138,8 @@ class Shell {
 	// ---------------------------------------------------------------- requests
 
 	/** Queue a request; it is sent as soon as PKJS makes the channel writable. */
-	request(kind, id) {
-		const req = { kind: kind, id: id || null };
+	request(kind, id, key) {
+		const req = { kind: kind, id: id || null, key: key || null };
 
 		if (!this.ready || !this.messenger) {
 			this.queued = req;
@@ -150,8 +153,11 @@ class Shell {
 
 	sendPending() {
 		if (!this.messenger || !this.pending) return;
-		if (this.pending.kind === "detail") this.messenger.requestDetail(this.pending.id);
-		else if (this.pending.kind === "box") this.messenger.requestBox();
+		const kind = this.pending.kind;
+		if (kind === "detail") this.messenger.requestDetail(this.pending.id);
+		else if (kind === "box") this.messenger.requestBox();
+		else if (kind === "ct0") this.messenger.requestCt0();
+		else if (kind === "ct0group") this.messenger.requestCt0Group(this.pending.key);
 		else this.messenger.requestRefresh();
 		this.armResponseTimer();
 	}
@@ -182,9 +188,9 @@ class Shell {
 			return;
 		}
 
-		const kind = this.pending.kind;
+		const pending = this.pending;
 		this.pending = null;
-		this.showRequestError(kind);
+		this.showRequestError(pending);
 	}
 
 	completeRequest() {
@@ -297,17 +303,31 @@ class Shell {
 		this.draw();
 	}
 
-	showRequestError(kind) {
+	/**
+	 * Replace whatever is waiting for a response with a retry action. The new
+	 * screen becomes `loadingScreen`, so the response - when it finally arrives
+	 * - replaces it instead of being ignored.
+	 */
+	replaceWithRetry(title, action, accent) {
+		const screen = statusScreen(
+			title,
+			"No response from your phone.\nPress select to retry.",
+			"Back to return",
+			action,
+			accent
+		);
+		this.loadingScreen = screen;
+		this.nav.replaceTop(screen);
+		this.draw();
+	}
+
+	showRequestError(pending) {
+		const kind = pending ? pending.kind : "orders";
+
 		if (kind === "detail") {
 			if (this.nav.current === this.loadingScreen) {
 				const orderId = this.loadingScreen.id;
-				this.loadingScreen = null;
-				this.nav.replaceTop(
-					statusScreen("Order", "No response from your phone.\nPress select to retry.", "Back to return", () =>
-						this.request("detail", orderId)
-					)
-				);
-				this.draw();
+				this.replaceWithRetry("Order", () => this.request("detail", orderId));
 			}
 			return;
 		}
@@ -315,13 +335,23 @@ class Shell {
 		if (kind === "box") {
 			if (this.boxText) return; // keep the cached box on screen
 			if (this.nav.current === this.loadingScreen) {
-				this.loadingScreen = null;
-				this.nav.replaceTop(
-					statusScreen("CT0 box", "No response from your phone.\nPress select to retry.", "Back to return", () =>
-						this.request("box")
-					)
-				);
-				this.draw();
+				this.replaceWithRetry("CT0 box", () => this.request("box"), brand);
+			}
+			return;
+		}
+
+		if (kind === "ct0") {
+			if (this.ct0Groups) return; // keep the cached groups on screen
+			if (this.nav.current === this.loadingScreen) {
+				this.replaceWithRetry("CT0 purchases", () => this.openCt0(true), brand);
+			}
+			return;
+		}
+
+		if (kind === "ct0group") {
+			if (this.nav.current === this.loadingScreen) {
+				const key = pending.key;
+				this.replaceWithRetry("CT0", () => this.openCt0Group(key, true), brand);
 			}
 			return;
 		}
@@ -371,7 +401,7 @@ class Shell {
 
 		if (status === protocol.STATUS.ERROR) {
 			this.onError(pending, code, message);
-		} else if (status === protocol.STATUS.OK && this.items.length === 0) {
+		} else if (status === protocol.STATUS.OK && pending && pending.kind === "orders" && this.items.length === 0) {
 			this.showEmpty();
 		}
 	}
@@ -395,7 +425,30 @@ class Shell {
 			if (this.nav.current === this.loadingScreen) {
 				this.loadingScreen = null;
 				this.nav.replaceTop(
-					statusScreen("CT0 box", message || "Could not load the box.", "Back to return")
+					statusScreen("CT0 box", message || "Could not load the box.", "Back to return", null, brand)
+				);
+				this.draw();
+			}
+			return;
+		}
+
+		if (kind === "ct0") {
+			if (this.ct0Groups) return; // keep the cached groups
+			if (this.nav.current === this.loadingScreen) {
+				this.loadingScreen = null;
+				this.nav.replaceTop(
+					statusScreen("CT0 purchases", message || "Could not load your purchases.", "Back to return", null, brand)
+				);
+				this.draw();
+			}
+			return;
+		}
+
+		if (kind === "ct0group") {
+			if (this.nav.current === this.loadingScreen) {
+				this.loadingScreen = null;
+				this.nav.replaceTop(
+					statusScreen("CT0", message || "Could not load this group.", "Back to return", null, brand)
 				);
 				this.draw();
 			}
@@ -516,6 +569,90 @@ class Shell {
 		}
 	}
 
+	// ------------------------------------------------------------- ct0 purchases
+
+	/**
+	 * The CT0 purchases list: one row per group holding units (ready to ship,
+	 * on the way, missing). SELECT on a row drills into that group's items.
+	 */
+	openCt0(inPlace) {
+		this.request("ct0");
+		const screen = this.ct0Groups
+			? this.ct0Screen()
+			: statusScreen("CT0 purchases", "Loading\u2026", "Back to return", null, brand);
+		this.loadingScreen = screen;
+		if (inPlace) this.nav.replaceTop(screen);
+		else this.nav.push(screen);
+		this.draw();
+	}
+
+	ct0Rows(groups) {
+		return (groups || []).map(group => ({
+			key: group.key,
+			primary: group.label,
+			secondary: group.secondary || "",
+			value: group.value || "",
+		}));
+	}
+
+	ct0Screen() {
+		return listScreen("CT0 purchases", this.ct0Rows(this.ct0Groups), "select: open", brand);
+	}
+
+	groupLabel(key) {
+		const groups = this.ct0Groups || [];
+		for (let i = 0; i < groups.length; i++) {
+			if (groups[i].key === key) return groups[i].label || "CT0";
+		}
+		return "CT0";
+	}
+
+	onCt0Groups(payload) {
+		if (!this.pending || this.pending.kind !== "ct0") return; // ignore stale
+		this.completeRequest();
+
+		const groups = (payload && payload.groups) || [];
+		this.ct0Groups = groups;
+		this.persist();
+
+		const screen = groups.length
+			? this.ct0Screen()
+			: statusScreen("CT0 purchases", "Your Zero box is empty.", REFRESH_HINT, () => this.openCt0(true), brand);
+
+		if (this.nav.current === this.loadingScreen) {
+			this.loadingScreen = null;
+			this.nav.replaceTop(screen);
+			this.draw();
+		}
+	}
+
+	openCt0Group(key, inPlace) {
+		if (!key) return;
+		this.request("ct0group", null, key);
+
+		const screen = statusScreen(this.groupLabel(key), "Loading\u2026", "Back to return", null, brand);
+		this.loadingScreen = screen;
+		if (inPlace) this.nav.replaceTop(screen);
+		else this.nav.push(screen);
+		this.draw();
+	}
+
+	onCt0Group(payload) {
+		if (!this.pending || this.pending.kind !== "ct0group") return; // ignore stale
+		const key = this.pending.key;
+		this.completeRequest();
+
+		const text = (payload && payload.text) || "";
+		const lines = text.length ? text.split("\n") : [];
+		const screen = detailScreen(this.groupLabel(key), lines, "Back to return", brand);
+
+		if (this.nav.current === this.loadingScreen) {
+			this.loadingScreen = null;
+			this.nav.replaceTop(screen);
+			this.draw();
+		}
+	}
+
 	detailVisibleLines() {
 		const lineHeight = fontRegular.height + 2;
 		const top = HEADER_H + LIST_TOP;
@@ -552,13 +689,15 @@ class Shell {
 				this.ready = true;
 				const queued = this.queued;
 				this.queued = null;
-				if (queued) this.request(queued.kind, queued.id);
+				if (queued) this.request(queued.kind, queued.id, queued.key);
 				else this.request("orders");
 			},
 			onStatus: (status, code, message) => this.onStatus(status, code, message),
 			onOrders: payload => this.onOrders(payload),
 			onDetail: payload => this.onDetail(payload),
 			onBox: payload => this.onBox(payload),
+			onCt0Groups: payload => this.onCt0Groups(payload),
+			onCt0Group: payload => this.onCt0Group(payload),
 		});
 	}
 
@@ -588,7 +727,7 @@ class Shell {
 			if (down) {
 				this.downTimer = setTimeout(() => {
 					this.downTimer = null;
-					this.openBox();
+					if (this.isRoot()) this.openBox();
 				}, REFRESH_HOLD_MS);
 				return;
 			}
@@ -600,12 +739,32 @@ class Shell {
 			return;
 		}
 
+		if (type === "up") {
+			if (down) {
+				this.upTimer = setTimeout(() => {
+					this.upTimer = null;
+					if (this.isRoot()) this.openCt0();
+				}, REFRESH_HOLD_MS);
+				return;
+			}
+			if (this.upTimer) {
+				clearTimeout(this.upTimer);
+				this.upTimer = null;
+				this.scroll(-1);
+			}
+			return;
+		}
+
 		if (!down) return;
 		if (type === "back") {
 			if (this.nav.pop()) this.draw();
 			return;
 		}
-		if (type === "up") this.scroll(-1);
+	}
+
+	/** The hold shortcuts only fire on the order list itself, not on a sub-screen. */
+	isRoot() {
+		return this.nav.depth === 1;
 	}
 
 	scroll(delta) {
@@ -634,7 +793,10 @@ class Shell {
 
 		if (screen.kind === "list") {
 			const item = screen.items[screen.index];
-			if (item) this.openDetail(item.id);
+			if (!item) return;
+			// CT0 group rows carry a state key, order rows carry an order id.
+			if (item.key) this.openCt0Group(item.key);
+			else this.openDetail(item.id);
 		} else if (screen.action) {
 			screen.action();
 		}

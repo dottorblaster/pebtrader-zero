@@ -48,7 +48,8 @@
       "CHUNK_INDEX",
       "CHUNK_COUNT",
       "DATA",
-      "API_BASE"
+      "API_BASE",
+      "CT0_GROUP"
     ],
     "resources": {
       "media": [

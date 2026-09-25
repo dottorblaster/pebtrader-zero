@@ -52,11 +52,19 @@
 					"CHUNK_COUNT",
 					"DATA",
 					"API_BASE",
+					"CT0_GROUP",
 				];
 			case "COMMANDS":
-				return { REFRESH: 1, GET_ORDERS: 2, GET_DETAIL: 3, GET_BOX: 4 };
+				return { REFRESH: 1, GET_ORDERS: 2, GET_DETAIL: 3, GET_BOX: 4, GET_CT0: 5, GET_CT0_GROUP: 6 };
 			case "TYPES":
-				return { STATUS: 10, ORDERS: 11, ORDER_DETAIL: 12, BOX: 13 };
+				return {
+					STATUS: 10,
+					ORDERS: 11,
+					ORDER_DETAIL: 12,
+					BOX: 13,
+					CT0_GROUPS: 14,
+					CT0_GROUP: 15,
+				};
 			case "STATUS":
 				return { LOADING: 0, OK: 1, ERROR: 2 };
 			case "ERROR_CODES":
@@ -125,7 +133,7 @@
 			case "CT0_STATE_LABELS":
 				return { ok: "Ready", pending: "On the way", missing: "Missing" };
 			case "LIMITS":
-				return { ORDERS: 12, BOX_ITEMS: 12, DETAIL_ITEMS: 12, PAYLOAD_BYTES: 8192 };
+				return { ORDERS: 12, BOX_ITEMS: 12, DETAIL_ITEMS: 12, CT0_GROUP_ITEMS: 40, PAYLOAD_BYTES: 8192 };
 		}
 	}
 

@@ -51,6 +51,8 @@
 			if (type === TYPES.ORDERS && handlers.onOrders) handlers.onOrders(payload);
 			else if (type === TYPES.BOX && handlers.onBox) handlers.onBox(payload);
 			else if (type === TYPES.ORDER_DETAIL && handlers.onDetail) handlers.onDetail(payload);
+			else if (type === TYPES.CT0_GROUPS && handlers.onCt0Groups) handlers.onCt0Groups(payload);
+			else if (type === TYPES.CT0_GROUP && handlers.onCt0Group) handlers.onCt0Group(payload);
 		};
 	}
 

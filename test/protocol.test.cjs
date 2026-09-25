@@ -147,3 +147,20 @@ test("worst-case box payload stays within budget", () => {
 	assert.ok(size <= protocol.LIMITS.PAYLOAD_BYTES, `box payload ${size} bytes exceeds budget`);
 	assert.ok(protocol.chunkText(text).length <= 16, "too many chunks");
 });
+
+test("worst-case ct0 group payload stays within budget", () => {
+	const { groups } = ct0.groupSummary(boxFixture);
+	const lines = ct0.groupLines(groups[1], { maxItems: protocol.LIMITS.CT0_GROUP_ITEMS });
+	const text = protocol.encodePayload(protocol.packLines(lines));
+	const size = protocol.byteLength(text);
+
+	assert.ok(size <= protocol.LIMITS.PAYLOAD_BYTES, `ct0 group payload ${size} bytes exceeds budget`);
+	assert.ok(protocol.chunkText(text).length <= 16, "too many chunks");
+});
+
+test("ct0 groups payload stays within budget", () => {
+	const { groups } = ct0.groupSummary(boxFixture);
+	const text = protocol.encodePayload({ groups: ct0.groupRows(groups) });
+
+	assert.ok(protocol.byteLength(text) <= protocol.LIMITS.PAYLOAD_BYTES);
+});

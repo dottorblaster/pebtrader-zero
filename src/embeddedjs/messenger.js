@@ -20,6 +20,13 @@ export function createMessenger(handlers) {
 
 	const message = new Message({
 		keys: protocol.MESSAGE_KEYS,
+		// Left to itself the Message module opens the channel with the platform
+		// maximum buffers (8.2 KB each), and that firmware heap is the same
+		// budget the JS machine below needs. Outbound commands are a few dozen
+		// bytes; inbound payloads arrive chunked at protocol.CHUNK_SIZE. Sizing
+		// the buffers to what we actually send frees several KB of RAM.
+		input: 2048,
+		output: 512,
 		onReadable() {
 			const msg = this.read();
 			const data = {};
@@ -39,6 +46,17 @@ export function createMessenger(handlers) {
 		},
 		requestBox() {
 			message.write(new Map([["COMMAND", protocol.COMMANDS.GET_BOX]]));
+		},
+		requestCt0() {
+			message.write(new Map([["COMMAND", protocol.COMMANDS.GET_CT0]]));
+		},
+		requestCt0Group(key) {
+			message.write(
+				new Map([
+					["COMMAND", protocol.COMMANDS.GET_CT0_GROUP],
+					["CT0_GROUP", key],
+				])
+			);
 		},
 		requestDetail(orderId) {
 			message.write(

@@ -54,6 +54,26 @@ test("dispatches status", () => {
 	assert.deepEqual(statuses[0], [protocol.STATUS.ERROR, protocol.ERROR_CODES.NO_TOKEN, "nope"]);
 });
 
+test("dispatches a ct0 group payload", () => {
+	const received = [];
+	const handle = createMessageHandler(protocol, { onCt0Group: payload => received.push(payload) });
+
+	feed(handle, protocol.TYPES.CT0_GROUP, { text: protocol.HEADING_MARK + "Ready to ship\n26 cards" }, 3);
+
+	assert.equal(received.length, 1);
+	assert.equal(received[0].text.split("\n")[1], "26 cards");
+});
+
+test("dispatches a ct0 groups payload", () => {
+	const received = [];
+	const handle = createMessageHandler(protocol, { onCt0Groups: payload => received.push(payload) });
+
+	feed(handle, protocol.TYPES.CT0_GROUPS, { groups: [{ key: "ok" }, { key: "pending" }] }, 4);
+
+	assert.equal(received.length, 1);
+	assert.deepEqual(received[0].groups.map(group => group.key), ["ok", "pending"]);
+});
+
 test("consecutive streams do not corrupt each other", () => {
 	const received = [];
 	const handle = createMessageHandler(protocol, {

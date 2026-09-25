@@ -21,6 +21,7 @@
 			at: snapshot.at || null,
 			items: snapshot.items || [],
 			box: snapshot.box || null,
+			ct0: snapshot.ct0 || null,
 		});
 	}
 

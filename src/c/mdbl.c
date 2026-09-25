@@ -5,9 +5,15 @@
 // parsed order list. These are byte counts; the watch has spare app RAM.
 // The firmware requires all three of stack/slot/chunk to be non-zero when a
 // custom creation record is supplied.
+//
+// App RAM is shared with the firmware heap, so these sizes and the AppMessage
+// buffers in src/embeddedjs/messenger.js have to fit together: growing the JS
+// heap without shrinking those buffers makes `app_message_open` fail, and the
+// app faults while creating the machine. Keep the total in mind when bumping
+// either side, and always check a real launch on emery and gabbro.
 #define PEBBLE_JS_STACK_HEAP 4096
 #define PEBBLE_JS_SLOT_HEAP 57344
-#define PEBBLE_JS_CHUNK_HEAP 12288
+#define PEBBLE_JS_CHUNK_HEAP 20480
 
 int main(void) {
   Window *w = window_create();

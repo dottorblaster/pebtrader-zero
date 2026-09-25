@@ -10,8 +10,8 @@ do it. For the version/tag → GitHub Release flow, see
 | --- | --- |
 | `icon-small.png` (80×80) | store **iconSmall** |
 | `icon-large.png` (144×144) | store **iconLarge** |
-| `emery_list.png`, `emery_detail.png`, `emery_box.png` | Emery screenshots |
-| `gabbro_list.png`, `gabbro_detail.png`, `gabbro_box.png` | Gabbro screenshots |
+| `emery_list.png`, `emery_detail.png`, `emery_box.png`, `emery_ct0.png` | Emery screenshots |
+| `gabbro_list.png`, `gabbro_detail.png`, `gabbro_box.png`, `gabbro_ct0.png` | Gabbro screenshots |
 | `description.md` | store description |
 
 The watch **launcher** icon is separate: `resources/images/icon.png` (25×25,

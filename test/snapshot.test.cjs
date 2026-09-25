@@ -31,3 +31,18 @@ test("tolerates a snapshot without a box", () => {
 	assert.deepEqual(parsed.items, []);
 	assert.equal(parsed.box, null);
 });
+
+test("round-trips the cached ct0 groups", () => {
+	const value = {
+		at: 1,
+		items: [],
+		box: null,
+		ct0: [{ key: "ok", label: "Ready to ship", secondary: "26 cards", value: "86.35 EUR" }],
+	};
+
+	const parsed = snapshot.parse(snapshot.serialize(value));
+
+	assert.deepEqual(parsed.ct0, value.ct0);
+	// Older snapshots without ct0 still parse.
+	assert.equal(snapshot.parse(JSON.stringify({ v: snapshot.VERSION, items: [], at: 1 })).ct0, undefined);
+});

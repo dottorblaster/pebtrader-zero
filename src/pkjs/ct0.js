@@ -15,6 +15,14 @@ var format = require("./format");
 
 var ITEM_STATES = ["ok", "pending", "missing"];
 
+// Display order and labels for the CT0 purchases groups (see groupSummary).
+var GROUP_ORDER = ["ok", "pending", "missing"];
+var GROUP_LABELS = {
+	ok: "Ready to ship",
+	pending: "On the way",
+	missing: "Missing",
+};
+
 function formatMoney(cents, currency) {
 	if (typeof cents !== "number" || !isFinite(cents)) return null;
 	var amount = (cents / 100).toFixed(2);
@@ -80,6 +88,73 @@ function bySoonestEta(a, b) {
 	if (!b.eta) return -1;
 	if (a.eta !== b.eta) return a.eta < b.eta ? -1 : 1;
 	return (a.id || 0) - (b.id || 0);
+}
+
+/** Meta line for the box summary: state, the date that matters, the price. */
+function itemMeta(item) {
+	var state = item.state;
+	var meta = [];
+
+	if (state === "ok") meta.push("ready");
+	else if (state === "pending") meta.push("on the way");
+	else if (state === "missing") meta.push("missing");
+	if (state === "pending" && item.eta) meta.push("ETA " + format.formatDate(item.eta));
+	if (state === "ok" && item.arrivedAt) meta.push("arrived " + format.formatDate(item.arrivedAt));
+	if (item.price) meta.push(item.price);
+
+	return meta.join(" \u00b7 ");
+}
+
+/** The two display lines for one box item in the box summary. */
+function itemLines(item) {
+	var lines = [{ t: item.quantity + "x " + item.name, h: false }];
+	var meta = itemMeta(item);
+	if (meta) lines.push({ t: meta, h: false });
+	return lines;
+}
+
+/**
+ * One line per purchase for the drill-down screens: quantity, name, price and
+ * the date that matters for its state. A group can hold dozens of items and
+ * the watch heap is tiny, so the group screens get one line each.
+ */
+function groupItemLine(item) {
+	var parts = [item.quantity + "x " + item.name];
+	if (item.price) parts.push(item.price);
+
+	var day = format.formatDay(item.state === "ok" ? item.arrivedAt : item.eta);
+	if (day) parts.push(item.state === "pending" ? "ETA " + day : day);
+	else if (item.state === "missing") parts.push("missing");
+
+	return parts.join(" \u00b7 ");
+}
+
+/**
+ * Display order inside one group: pending by soonest ETA, arrived by newest
+ * arrival, missing by ETA - ties broken by id so the order is stable.
+ */
+function byStateDate(state) {
+	return function (a, b) {
+		var aDate = state === "ok" ? a.arrivedAt : a.eta;
+		var bDate = state === "ok" ? b.arrivedAt : b.eta;
+
+		if (aDate !== bDate) {
+			if (!aDate) return 1;
+			if (!bDate) return -1;
+			if (state === "ok") return bDate < aDate ? -1 : 1;
+			return aDate < bDate ? -1 : 1;
+		}
+		return (a.id || 0) - (b.id || 0);
+	};
+}
+
+/** The summarized items holding units in `state`, in display order. */
+function itemsInState(items, state) {
+	return (items || [])
+		.filter(function (item) {
+			return (item.states[state] || 0) > 0;
+		})
+		.sort(byStateDate(state));
 }
 
 /**
@@ -170,21 +245,142 @@ function boxLines(summary) {
 	if (items.length) {
 		head("Items (" + summary.itemCount + ")");
 		items.forEach(function (item) {
-			text(item.quantity + "x " + item.name);
-
-			var meta = [];
-			if (item.state === "ok") meta.push("ready");
-			else if (item.state === "pending") meta.push("on the way");
-			else if (item.state === "missing") meta.push("missing");
-			if (item.state === "pending" && item.eta) meta.push("ETA " + format.formatDate(item.eta));
-			if (item.state === "ok" && item.arrivedAt) meta.push("arrived " + format.formatDate(item.arrivedAt));
-			if (item.price) meta.push(item.price);
-			if (meta.length) text(meta.join(" \u00b7 "));
+			itemLines(item).forEach(function (line) {
+				text(line.t);
+			});
 		});
 		if (summary.itemsTruncated) text("\u2026 and more");
 	}
 
 	return lines;
+}
+
+/**
+ * Bucket the box into one row per state that holds units: what is ready to be
+ * shipped, what is still traveling and (rarely) what went missing.
+ *
+ * Returns { summary, groups }, each group carrying its own display metadata and
+ * the summarized items in display order.
+ */
+function groupSummary(items, options) {
+	var summary = summarizeCt0Items(items, options);
+	var all = (Array.isArray(items) ? items : []).map(summarizeItem);
+	var groups = [];
+
+	GROUP_ORDER.forEach(function (state) {
+		var units = summary.counts[state] || 0;
+		if (units <= 0) return;
+
+		var groupItems = itemsInState(all, state);
+		groups.push({
+			key: state,
+			label: GROUP_LABELS[state],
+			units: units,
+			itemCount: groupItems.length,
+			value: formatMoney(summary.valueByState[state] || 0, summary.currency),
+			secondary: units + (units === 1 ? " card" : " cards"),
+			items: groupItems,
+		});
+	});
+
+	return { summary: summary, groups: groups };
+}
+
+/** Minimal per-group rows for the watch list screen. */
+function groupRows(groups) {
+	return (groups || []).map(function (group) {
+		return {
+			key: group.key,
+			label: group.label,
+			secondary: group.secondary,
+			value: group.value || "",
+		};
+	});
+}
+
+/** Display lines for one group: heading, totals, then every item. */
+function groupLines(group, options) {
+	options = options || {};
+	var maxItems = options.maxItems == null ? 40 : options.maxItems;
+	var lines = [];
+
+	function text(value) {
+		if (value) lines.push({ t: value, h: false });
+	}
+
+	lines.push({ t: group.label || group.key, h: true });
+
+	var meta = [group.itemCount + (group.itemCount === 1 ? " purchase" : " purchases")];
+	meta.push(group.units + (group.units === 1 ? " card" : " cards"));
+	if (group.value) meta.push(group.value);
+	text(meta.join(" \u00b7 "));
+
+	var items = group.items || [];
+	if (!items.length) {
+		text("Nothing here right now.");
+		return lines;
+	}
+
+	items.slice(0, maxItems).forEach(function (item) {
+		lines.push({ t: groupItemLine(item), h: false });
+	});
+	if (items.length > maxItems) text("\u2026 and " + (items.length - maxItems) + " more");
+
+	return lines;
+}
+
+function findGroup(groups, key) {
+	for (var i = 0; i < (groups || []).length; i++) {
+		if (groups[i].key === key) return groups[i];
+	}
+	return null;
+}
+
+/**
+ * Fetch the box and build the CT0 purchases group rows.
+ * Resolves with { ok, status, data: { summary, groups }, rows, payload }.
+ */
+function fetchCt0Groups(client, options) {
+	return client.getCt0BoxItems().then(function (result) {
+		if (!result.ok) return result;
+		var grouped = groupSummary(result.data, options);
+		var rows = groupRows(grouped.groups);
+		return {
+			ok: true,
+			status: result.status,
+			data: grouped,
+			rows: rows,
+			payload: { groups: rows },
+		};
+	});
+}
+
+/**
+ * Fetch the box and build the display lines for one state's group.
+ * Resolves with { ok, status, data, lines, payload } or the client's error.
+ */
+function fetchCt0Group(client, state, options) {
+	options = options || {};
+	return client.getCt0BoxItems().then(function (result) {
+		if (!result.ok) return result;
+
+		var grouped = groupSummary(result.data, options);
+		var group = findGroup(grouped.groups, state);
+		var lines = group
+			? groupLines(group, { maxItems: options.maxItems })
+			: [
+					{ t: GROUP_LABELS[state] || "CT0 box", h: true },
+					{ t: "Nothing here right now.", h: false },
+			  ];
+
+		return {
+			ok: true,
+			status: result.status,
+			data: grouped,
+			lines: lines,
+			payload: protocol.packLines(lines),
+		};
+	});
 }
 
 /**
@@ -207,9 +403,20 @@ function fetchCt0Box(client, options) {
 }
 
 module.exports = {
+	GROUP_ORDER: GROUP_ORDER,
+	GROUP_LABELS: GROUP_LABELS,
 	stateCounts: stateCounts,
 	summarizeItem: summarizeItem,
 	summarizeCt0Items: summarizeCt0Items,
+	itemMeta: itemMeta,
+	itemLines: itemLines,
+	groupItemLine: groupItemLine,
+	itemsInState: itemsInState,
+	groupSummary: groupSummary,
+	groupRows: groupRows,
+	groupLines: groupLines,
 	boxLines: boxLines,
 	fetchCt0Box: fetchCt0Box,
+	fetchCt0Groups: fetchCt0Groups,
+	fetchCt0Group: fetchCt0Group,
 };

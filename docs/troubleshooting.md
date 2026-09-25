@@ -42,6 +42,21 @@ The Moddable JS heap is too small. `src/c/mdbl.c` raises it (the firmware
 requires all of `stack`/`slot`/`chunk` to be non-zero when a creation record is
 supplied). Don't lower those values; raise them if you add heavy modules.
 
+Watch the message in the logs: `# Chunk allocation: N bytes failed in fixed size
+heap` means the **chunk** heap (`PEBBLE_JS_CHUNK_HEAP`), while a plain
+`fxAbort memory full` with the shell already running usually means the **slot**
+heap.
+
+## Emulator: app faults immediately, `PC: 0`
+
+The app died while creating the Moddable machine or opening AppMessage - the
+app RAM budget is shared, so a JS heap that is too large leaves nothing for
+`app_message_open` (which the `Message` module would otherwise call with the
+8.2 KB platform maximum buffers). Shrink the heaps in `src/c/mdbl.c` and/or the
+`input`/`output` buffers in `src/embeddedjs/messenger.js` until it launches, and
+re-test on both emery and gabbro. See
+[architecture.md](architecture.md#design-decisions).
+
 ## Nothing shows in the simulator / blank screen
 
 - Wait for the first frame: the app draws a fixed Poco buffer, not a Piu tree.
