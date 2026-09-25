@@ -9,9 +9,11 @@
 			"./app",
 			"./nav",
 			"./messenger",
+			"./cache",
 			"./protocol"
 		],
 		"shared-protocol": "../common/protocol",
-		"shared-message-handler": "../common/message-handler"
+		"shared-message-handler": "../common/message-handler",
+		"shared-snapshot": "../common/snapshot"
 	}
 }

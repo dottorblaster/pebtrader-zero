@@ -77,6 +77,10 @@ The default screen is your order list.
 
 Add your CardTrader API token from the app's settings in the Pebble mobile app.
 
+The last snapshot is cached on the watch, so the list is shown instantly on
+launch and still appears (marked **cached** in the header) when the phone is
+away or CardTrader is unreachable.
+
 ## Project layout
 
 ```

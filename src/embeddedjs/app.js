@@ -11,6 +11,7 @@ import Button from "pebble/button";
 import protocol from "./protocol";
 import { createMessenger } from "./messenger";
 import { Navigator, listScreen, statusScreen, detailScreen } from "./nav";
+import { load as loadSnapshot, save as saveSnapshot } from "./cache";
 
 const render = new Poco(screen);
 
@@ -75,7 +76,9 @@ class Shell {
 	constructor() {
 		this.nav = new Navigator();
 		this.items = [];
+		this.boxText = null;
 		this.updatedAt = null;
+		this.stale = false;
 		this.ready = false;
 		this.pendingDetail = false;
 		this.pendingBox = false;
@@ -85,12 +88,31 @@ class Shell {
 			onPush: (down, type) => this.onButton(down, type),
 		});
 
+		// Show the last snapshot immediately, then refresh in the background.
+		const cached = loadSnapshot();
+		if (cached && cached.items.length) {
+			this.items = cached.items;
+			this.boxText = cached.box || null;
+			this.updatedAt = cached.at ? new Date(cached.at) : null;
+			this.stale = true;
+			this.showOrders();
+		} else {
+			this.showLoading();
+		}
+
 		// The Message channel and its key table are not free on the tiny watch
 		// heap, so create them after the first frame has been drawn.
 		this.messenger = null;
-		this.showLoading();
 		this.startTimer = setTimeout(() => this.startMessaging(), 50);
 		console.log("PebTrader Zero shell started");
+	}
+
+	persist() {
+		saveSnapshot({
+			items: this.items,
+			box: this.boxText || null,
+			at: this.updatedAt ? this.updatedAt.getTime() : null,
+		});
 	}
 
 	startMessaging() {
@@ -121,8 +143,9 @@ class Shell {
 		const screen = this.nav.current;
 		if (screen) {
 			render.fillRectangle(black, 0, 0, render.width, HEADER_H);
-			const titleWidth = render.getTextWidth(screen.title, fontHeader);
-			render.drawText(screen.title, fontHeader, white, (render.width - titleWidth) / 2, (HEADER_H - fontHeader.height) / 2);
+			const title = fitText(screen.title, fontHeader, render.width - SIDE_PAD * 2);
+			const titleWidth = render.getTextWidth(title, fontHeader);
+			render.drawText(title, fontHeader, white, (render.width - titleWidth) / 2, (HEADER_H - fontHeader.height) / 2);
 
 			if (screen.kind === "list") this.drawList(screen);
 			else if (screen.kind === "detail") this.drawDetail(screen);
@@ -213,11 +236,17 @@ class Shell {
 
 	onStatus(status, code, message) {
 		if (status === protocol.STATUS.ERROR) {
-			if (this.pendingDetail) {
+			if (this.pendingDetail || this.pendingBox) {
+				const box = this.pendingBox && this.boxText;
 				this.pendingDetail = false;
-		this.pendingBox = false;
-				this.nav.replaceTop(statusScreen("Order", message || "Could not load this order.", "Back to return"));
+				this.pendingBox = false;
+				if (box) return; // keep the cached box on screen
+				this.nav.replaceTop(statusScreen("Order", message || "Could not load this screen.", "Back to return"));
 				this.draw();
+			} else if (this.items.length > 0) {
+				// Keep the cached list rather than replacing it with an error.
+				this.stale = true;
+				this.showOrders();
 			} else {
 				this.showError(code, message);
 			}
@@ -235,16 +264,19 @@ class Shell {
 			primary: protocol.orderStateLabel(order.state),
 			secondary: this.secondaryFor(order),
 			value: order.total || "",
-			detail: this.detailFor(order),
 		}));
 		this.updatedAt = new Date();
+		this.stale = false;
+		this.persist();
 
 		if (this.items.length === 0) this.showEmpty();
 		else this.showOrders();
 	}
 
 	showOrders() {
-		this.nav.reset(listScreen("Orders \u00b7 " + formatTime(this.updatedAt), this.items, REFRESH_HINT));
+		const at = this.updatedAt ? formatTime(this.updatedAt) : "--:--";
+		const title = "Orders \u00b7 " + (this.stale ? "cached " : "") + at;
+		this.nav.reset(listScreen(title, this.items, LIST_HINT));
 		this.draw();
 	}
 
@@ -253,16 +285,6 @@ class Shell {
 		if (order.who) text += " \u00b7 " + order.who;
 		if (order.ct0) text += " \u00b7 CT0";
 		return text;
-	}
-
-	detailFor(order) {
-		const lines = [
-			protocol.orderStateLabel(order.state),
-			order.size + (order.size === 1 ? " item" : " items") + (order.ct0 ? " \u00b7 CardTrader Zero" : ""),
-		];
-		if (order.total) lines.push("Total: " + order.total);
-		if (order.who) lines.push("Counterparty: " + order.who);
-		return lines.join("\n");
 	}
 
 	openDetail(orderId) {
@@ -284,7 +306,11 @@ class Shell {
 
 	openBox() {
 		this.pendingBox = true;
-		this.nav.push(statusScreen("CT0 box", "Loading\u2026", "Back to return"));
+		if (this.boxText) {
+			this.nav.push(detailScreen("CT0 box", this.boxText.split("\n"), "Back to return"));
+		} else {
+			this.nav.push(statusScreen("CT0 box", "Loading\u2026", "Back to return"));
+		}
 		this.draw();
 		if (this.messenger) this.messenger.requestBox();
 	}
@@ -292,6 +318,8 @@ class Shell {
 	onBox(payload) {
 		this.pendingBox = false;
 		const text = (payload && payload.text) || "";
+		this.boxText = text;
+		this.persist();
 		const lines = text.length ? text.split("\n") : [];
 		this.nav.replaceTop(detailScreen("CT0 box", lines, "Back to return"));
 		this.draw();
