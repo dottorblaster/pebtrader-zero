@@ -5,12 +5,17 @@
 A PebbleOS (Alloy) watch app to view the state of your
 [CardTrader Zero](https://www.cardtrader.com/) orders, right on your wrist.
 
-The watch UI is written in JavaScript with the [Alloy](https://developer.repebble.com/guides/alloy/)
+| Orders | Order detail | CardTrader Zero box |
+| --- | --- | --- |
+| ![Order list](docs/images/order-list.png) | ![Order detail](docs/images/order-detail.png) | ![CT0 box](docs/images/ct0-box.png) |
+
+The watch UI is JavaScript with the [Alloy](https://developer.repebble.com/guides/alloy/)
 framework (Moddable XS). CardTrader API calls run on the phone in PebbleKit JS,
 so your API token never leaves the phone.
 
-> **Status:** early scaffold. The app currently renders a hello-world screen.
-> See the [issues](https://github.com/dottorblaster/pebtrader-zero/issues) for the roadmap.
+> **Status:** feature-complete for v0.1 — order list, order detail, CT0 box,
+> settings and an offline cache. See the
+> [issues](https://github.com/dottorblaster/pebtrader-zero/issues) for what's next.
 
 ## Target platforms
 
@@ -63,6 +68,12 @@ pebble login
 pebble install --cloudpebble
 ```
 
+### 4. Configure it
+
+Add your CardTrader API token from the app's settings in the Pebble mobile app.
+See [docs/configuration.md](docs/configuration.md) for where to find the token
+and what each setting does.
+
 ## Using the app
 
 The default screen is your order list.
@@ -75,8 +86,6 @@ The default screen is your order list.
 | Hold Select | Refresh |
 | Hold Down | Open the CardTrader Zero box |
 
-Add your CardTrader API token from the app's settings in the Pebble mobile app.
-
 The last snapshot is cached on the watch, so the list is shown instantly on
 launch and still appears (marked **cached** in the header) when the phone is
 away or CardTrader is unreachable.
@@ -84,16 +93,25 @@ away or CardTrader is unreachable.
 ## Project layout
 
 ```
-src/c/mdbl.c                   C glue around the Moddable runtime
-src/embeddedjs/main.js         JavaScript that runs on the watch (UI + logic)
-src/embeddedjs/manifest.json   Moddable manifest (lists JS modules to build)
-src/pkjs/index.js              PebbleKit JS: CardTrader API calls (phone side)
-package.json                   Project metadata (UUID, platforms, resources)
-wscript                        Build rules - usually no need to edit
+src/c/mdbl.c                   C glue around the Moddable runtime (heap sizing)
+src/embeddedjs/                JavaScript that runs on the watch (UI + logic)
+src/pkjs/                      PebbleKit JS: CardTrader API calls (phone side)
+src/common/                    Code shared by both JavaScript environments
+test/                          Node unit tests + sanitized fixtures
+tools/mock-cardtrader/         Local mock API for end-to-end testing
 ```
 
 Alloy apps have two JavaScript environments: `embeddedjs` runs on the watch,
-`pkjs` runs on the connected phone.
+`pkjs` runs on the connected phone. A full module map is in
+[docs/architecture.md](docs/architecture.md).
+
+## Documentation
+
+- [Configuration](docs/configuration.md) — the API token and every setting
+- [Architecture](docs/architecture.md) — components, data flow, endpoints
+- [Protocol](docs/protocol.md) — the watch ↔ phone wire contract
+- [Security & privacy](SECURITY.md) — threat model and privacy note
+- [Troubleshooting](docs/troubleshooting.md) — common problems
 
 ## Testing
 
@@ -106,14 +124,7 @@ so the app can be exercised end to end (list, detail, box and every error
 state) without the real API. See
 [its README](tools/mock-cardtrader/README.md).
 
-## Security and privacy
-
-The threat model and a short privacy note live in
-[docs/security.md](docs/security.md). In short: the token stays on the phone,
-the API client only talks HTTPS, and the watch receives normalized, non-secret
-data.
-
-## Documentation
+## External references
 
 - Alloy framework: <https://developer.repebble.com/guides/alloy/>
 - Pebble developer docs: <https://developer.repebble.com/>
