@@ -63,6 +63,20 @@ pebble login
 pebble install --cloudpebble
 ```
 
+## Using the app
+
+The default screen is your order list.
+
+| Button | Action |
+| --- | --- |
+| Up / Down | Scroll / move the selection |
+| Select | Open the selected order |
+| Back | Go back (press and hold to exit) |
+| Hold Select | Refresh |
+| Hold Down | Open the CardTrader Zero box |
+
+Add your CardTrader API token from the app's settings in the Pebble mobile app.
+
 ## Project layout
 
 ```

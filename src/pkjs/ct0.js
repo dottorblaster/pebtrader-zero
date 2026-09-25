@@ -10,6 +10,9 @@
  * (`missing`).
  */
 
+var protocol = require("../common/protocol");
+var format = require("./format");
+
 var ITEM_STATES = ["ok", "pending", "missing"];
 
 function formatMoney(cents, currency) {
@@ -140,16 +143,65 @@ function summarizeCt0Items(items, options) {
 }
 
 /**
- * Fetch the CT0 box through the API client and normalize it. Resolves with the
- * same structured envelope as the client.
+ * Turn a normalized CT0 summary into display lines for the watch. PKJS does the
+ * formatting so the watch only splits and draws a string.
+ */
+function boxLines(summary) {
+	var lines = [];
+	function head(t) {
+		lines.push({ t: t, h: true });
+	}
+	function text(t) {
+		if (t) lines.push({ t: t, h: false });
+	}
+
+	head("In the box");
+	text(summary.counts.ok + " ready");
+	text(summary.counts.pending + " on the way");
+	if (summary.counts.missing) text(summary.counts.missing + " missing (refunded)");
+	if (summary.totalValue) text("Total value: " + summary.totalValue);
+
+	if (summary.soonestEta) {
+		head("Next arrival");
+		text(format.formatDate(summary.soonestEta));
+	}
+
+	var items = summary.items || [];
+	if (items.length) {
+		head("Items (" + summary.itemCount + ")");
+		items.forEach(function (item) {
+			text(item.quantity + "x " + item.name);
+
+			var meta = [];
+			if (item.state === "ok") meta.push("ready");
+			else if (item.state === "pending") meta.push("on the way");
+			else if (item.state === "missing") meta.push("missing");
+			if (item.state === "pending" && item.eta) meta.push("ETA " + format.formatDate(item.eta));
+			if (item.state === "ok" && item.arrivedAt) meta.push("arrived " + format.formatDate(item.arrivedAt));
+			if (item.price) meta.push(item.price);
+			if (meta.length) text(meta.join(" \u00b7 "));
+		});
+		if (summary.itemsTruncated) text("\u2026 and more");
+	}
+
+	return lines;
+}
+
+/**
+ * Fetch the CT0 box through the API client and normalize it.
+ * Resolves with { ok, status, data: summary, lines, payload } or the error.
  */
 function fetchCt0Box(client, options) {
 	return client.getCt0BoxItems().then(function (result) {
 		if (!result.ok) return result;
+		var summary = summarizeCt0Items(result.data, options);
+		var lines = boxLines(summary);
 		return {
 			ok: true,
 			status: result.status,
-			data: summarizeCt0Items(result.data, options),
+			data: summary,
+			lines: lines,
+			payload: protocol.packLines(lines),
 		};
 	});
 }
@@ -158,5 +210,6 @@ module.exports = {
 	stateCounts: stateCounts,
 	summarizeItem: summarizeItem,
 	summarizeCt0Items: summarizeCt0Items,
+	boxLines: boxLines,
 	fetchCt0Box: fetchCt0Box,
 };

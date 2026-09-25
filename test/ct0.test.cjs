@@ -92,6 +92,26 @@ test("items are sorted by soonest ETA", () => {
 	assert.deepEqual(summary.items.map((item) => item.id), [2, 1, 3]);
 });
 
+test("boxLines summarises the fixture box", () => {
+	const summary = ct0.summarizeCt0Items(fixture);
+	const lines = ct0.boxLines(summary);
+	const text = lines.map(line => line.t);
+
+	assert.ok(lines.some(line => line.t === "In the box" && line.h === true));
+	assert.ok(text.includes("26 ready"));
+	assert.ok(text.includes("31 on the way"));
+	assert.ok(text.some(t => t.indexOf("Total value:") === 0));
+	assert.ok(lines.some(line => line.t === "Items (41)" && line.h === true));
+});
+
+test("boxLines distinguishes missing items", () => {
+	const summary = ct0.summarizeCt0Items([{ id: 1, name: "A", quantity: { missing: 2 }, buyer_price: { cents: 100, currency: "EUR" } }]);
+	const lines = ct0.boxLines(summary);
+	assert.ok(lines.some(line => line.t === "2 missing (refunded)"));
+	assert.ok(lines.some(line => line.t === "2x A"));
+	assert.ok(lines.some(line => line.t.indexOf("missing") !== -1 && !line.h));
+});
+
 test("fetchCt0Box normalizes and propagates errors", async () => {
 	const okClient = {
 		getCt0BoxItems: () => Promise.resolve({ ok: true, status: 200, data: fixture }),

@@ -31,6 +31,7 @@ const SIDE_PAD = ROUND ? 24 : 6;
 const VISIBLE_ROWS = ROUND ? 3 : 4;
 const REFRESH_HOLD_MS = 700;
 const REFRESH_HINT = "Hold select to refresh";
+const LIST_HINT = "hold: down box, select refresh";
 
 function formatTime(date) {
 	const h = date.getHours();
@@ -77,6 +78,7 @@ class Shell {
 		this.updatedAt = null;
 		this.ready = false;
 		this.pendingDetail = false;
+		this.pendingBox = false;
 
 		this.button = new Button({
 			types: ["select", "up", "down", "back"],
@@ -102,6 +104,7 @@ class Shell {
 			onStatus: (status, code, message) => this.onStatus(status, code, message),
 			onOrders: payload => this.onOrders(payload),
 			onDetail: payload => this.onDetail(payload),
+			onBox: payload => this.onBox(payload),
 		});
 	}
 
@@ -212,6 +215,7 @@ class Shell {
 		if (status === protocol.STATUS.ERROR) {
 			if (this.pendingDetail) {
 				this.pendingDetail = false;
+		this.pendingBox = false;
 				this.nav.replaceTop(statusScreen("Order", message || "Could not load this order.", "Back to return"));
 				this.draw();
 			} else {
@@ -271,9 +275,25 @@ class Shell {
 
 	onDetail(payload) {
 		this.pendingDetail = false;
+		this.pendingBox = false;
 		const text = (payload && payload.text) || "";
 		const lines = text.length ? text.split("\n") : [];
 		this.nav.replaceTop(detailScreen("Order", lines, "Back to return"));
+		this.draw();
+	}
+
+	openBox() {
+		this.pendingBox = true;
+		this.nav.push(statusScreen("CT0 box", "Loading\u2026", "Back to return"));
+		this.draw();
+		if (this.messenger) this.messenger.requestBox();
+	}
+
+	onBox(payload) {
+		this.pendingBox = false;
+		const text = (payload && payload.text) || "";
+		const lines = text.length ? text.split("\n") : [];
+		this.nav.replaceTop(detailScreen("CT0 box", lines, "Back to return"));
 		this.draw();
 	}
 
@@ -296,7 +316,7 @@ class Shell {
 			const line = screen.lines[screen.offset + i];
 			if (line === undefined) break;
 			const y = top + i * lineHeight;
-			const heading = line.charCodeAt(0) === 1;
+			const heading = line.charCodeAt(0) === protocol.HEADING_MARK.charCodeAt(0);
 			const value = heading ? line.slice(1) : line;
 			const font = heading ? fontBold : fontRegular;
 			render.drawText(fitText(value, font, render.width - SIDE_PAD * 2), font, heading ? black : dark, SIDE_PAD, y);
@@ -306,44 +326,59 @@ class Shell {
 	onButton(down, type) {
 		if (type === "select") {
 			if (down) {
-				this.longPressTimer = setTimeout(() => {
-					this.longPressTimer = null;
+				this.selectTimer = setTimeout(() => {
+					this.selectTimer = null;
 					this.refresh();
 				}, REFRESH_HOLD_MS);
 				return;
 			}
-			if (this.longPressTimer) {
-				clearTimeout(this.longPressTimer);
-				this.longPressTimer = null;
+			if (this.selectTimer) {
+				clearTimeout(this.selectTimer);
+				this.selectTimer = null;
 				this.onSelect();
 			}
 			return;
 		}
 
-		if (!down) return;
-		const screen = this.nav.current;
+		if (type === "down") {
+			if (down) {
+				this.downTimer = setTimeout(() => {
+					this.downTimer = null;
+					this.openBox();
+				}, REFRESH_HOLD_MS);
+				return;
+			}
+			if (this.downTimer) {
+				clearTimeout(this.downTimer);
+				this.downTimer = null;
+				this.scroll(1);
+			}
+			return;
+		}
 
+		if (!down) return;
 		if (type === "back") {
 			if (this.nav.pop()) this.draw();
 			return;
 		}
+		if (type === "up") this.scroll(-1);
+	}
+
+	scroll(delta) {
+		const screen = this.nav.current;
 		if (!screen) return;
 
 		if (screen.kind === "list") {
-			if (type === "up" && screen.index > 0) {
-				screen.index -= 1;
-				this.draw();
-			} else if (type === "down" && screen.index < screen.items.length - 1) {
-				screen.index += 1;
+			const next = screen.index + delta;
+			if (next >= 0 && next < screen.items.length) {
+				screen.index = next;
 				this.draw();
 			}
 		} else if (screen.kind === "detail") {
 			const maxOffset = Math.max(0, screen.lines.length - this.detailVisibleLines());
-			if (type === "up" && screen.offset > 0) {
-				screen.offset -= 1;
-				this.draw();
-			} else if (type === "down" && screen.offset < maxOffset) {
-				screen.offset += 1;
+			const next = screen.offset + delta;
+			if (next >= 0 && next <= maxOffset) {
+				screen.offset = next;
 				this.draw();
 			}
 		}

@@ -16,6 +16,7 @@ var protocol = require("../common/protocol");
 var client = require("./client");
 var settings = require("./settings");
 var orders = require("./orders");
+var ct0 = require("./ct0");
 
 var seq = 0;
 
@@ -128,6 +129,19 @@ function refreshDetail(orderId) {
 		});
 }
 
+function refreshBox() {
+	sendStatus(protocol.STATUS.LOADING);
+
+	ct0.fetchCt0Box(client, { maxItems: protocol.LIMITS.BOX_ITEMS }).then(function (result) {
+		if (!result.ok) {
+			sendStatus(protocol.STATUS.ERROR, protocol.errorCodeFromApi(result.error.code), result.error.message);
+			return;
+		}
+		sendPayload(protocol.TYPES.BOX, result.payload);
+		sendStatus(protocol.STATUS.OK);
+	});
+}
+
 function onAppMessage(e) {
 	var payload = (e && e.payload) || {};
 	var command = payload.COMMAND;
@@ -136,6 +150,8 @@ function onAppMessage(e) {
 	} else if (command === protocol.COMMANDS.GET_DETAIL) {
 		var orderId = payload.ORDER_ID;
 		if (orderId) refreshDetail(orderId);
+	} else if (command === protocol.COMMANDS.GET_BOX) {
+		refreshBox();
 	}
 }
 

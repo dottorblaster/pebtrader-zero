@@ -110,6 +110,14 @@ test("watch manifest maps the shared protocol module", () => {
 	assert.equal(manifest.modules["shared-protocol"], "../common/protocol");
 });
 
+test("packLines marks headings and joins with newlines", () => {
+	const packed = protocol.packLines([
+		{ t: "Head", h: true },
+		{ t: "body", h: false },
+	]);
+	assert.equal(packed.text, protocol.HEADING_MARK + "Head\nbody");
+});
+
 test("state labels and groups degrade gracefully", () => {
 	assert.equal(protocol.orderStateLabel("paid"), "Paid");
 	assert.equal(protocol.orderStateLabel("nonsense"), "Unknown");

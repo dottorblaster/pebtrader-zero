@@ -54,8 +54,8 @@ they match `protocol.MESSAGE_KEYS`).
 | --- | --- | --- |
 | `STATUS` | 10 | `{ status, errorCode?, message? }` |
 | `ORDERS` | 11 | `{ orders: [summary...] }` |
-| `ORDER_DETAIL` | 12 | `{ order: detail }` |
-| `BOX` | 13 | `{ box: summary }` |
+| `ORDER_DETAIL` | 12 | `{ text }` (pre-formatted lines) |
+| `BOX` | 13 | `{ text }` (pre-formatted lines) |
 
 ## Status and errors
 
@@ -132,6 +132,11 @@ fields a list row needs for each order (`orders.toWatchList`):
 | `ct0` | `true` for CardTrader Zero orders |
 
 The `ORDERS` payload body is `{ orders: [...], total }`.
+
+The `ORDER_DETAIL` and `BOX` payload bodies are `{ text }`: pre-formatted
+display lines joined with `\n`, where a heading line is prefixed with `\u0001`.
+PKJS does the formatting so the watch only has to split a string and draw it
+(the watch heap cannot hold N line objects).
 
 ## Example flow
 

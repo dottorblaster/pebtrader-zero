@@ -10,11 +10,7 @@
  */
 
 var protocol = require("../common/protocol");
-
-// Heading lines are marked with a leading SOH so the watch can split the text
-// and still know which lines are headings (one string beats N line objects on
-// the watch's tiny heap).
-var HEADING_MARK = "\u0001";
+var format = require("./format");
 
 // Documented order states, plus the spelling seen in the wild.
 var ORDER_STATES = [
@@ -181,11 +177,6 @@ function toWatchList(summaries) {
 	});
 }
 
-function formatDateTime(iso) {
-	if (typeof iso !== "string" || iso.length < 16) return null;
-	return iso.slice(0, 10) + " " + iso.slice(11, 16);
-}
-
 /**
  * Turn a normalized order detail into display lines for the watch. The watch
  * heap is tiny, so PKJS does the formatting and the watch just renders strings.
@@ -208,9 +199,9 @@ function detailLines(order) {
 
 	if (order.paidAt || order.sentAt || order.cancelledAt) {
 		head("Timeline");
-		if (order.paidAt) text("Paid: " + formatDateTime(order.paidAt));
-		if (order.sentAt) text("Sent: " + formatDateTime(order.sentAt));
-		if (order.cancelledAt) text("Cancelled: " + formatDateTime(order.cancelledAt));
+		if (order.paidAt) text("Paid: " + format.formatDateTime(order.paidAt));
+		if (order.sentAt) text("Sent: " + format.formatDateTime(order.sentAt));
+		if (order.cancelledAt) text("Cancelled: " + format.formatDateTime(order.cancelledAt));
 	}
 
 	if (order.shipping) {
@@ -238,15 +229,9 @@ function detailLines(order) {
 	return lines;
 }
 
-/** Pack display lines into a single string for the wire. */
+/** Pack display lines into the single wire payload. */
 function packDetail(lines) {
-	return {
-		text: lines
-			.map(function (line) {
-				return (line.h ? HEADING_MARK : "") + line.t;
-			})
-			.join("\n"),
-	};
+	return protocol.packLines(lines);
 }
 
 /**

@@ -213,6 +213,20 @@
 		});
 	}
 
+	// Display lines sent as one string: a heading line is prefixed with this.
+	var HEADING_MARK = "\u0001";
+
+	/** Pack [{ t, h }] display lines into the single wire payload { text }. */
+	function packLines(lines) {
+		return {
+			text: (lines || [])
+				.map(function (line) {
+					return (line.h ? HEADING_MARK : "") + line.t;
+				})
+				.join("\n"),
+		};
+	}
+
 	/**
 	 * Stateful chunk reassembler for the watch.
 	 * push({ seq, index, count, data }) returns the full text when the last
@@ -251,6 +265,7 @@
 
 	return {
 		CHUNK_SIZE: CHUNK_SIZE,
+		HEADING_MARK: HEADING_MARK,
 		get MESSAGE_KEYS() { return get("MESSAGE_KEYS"); },
 		get COMMANDS() { return get("COMMANDS"); },
 		get TYPES() { return get("TYPES"); },
@@ -273,6 +288,7 @@
 		decodePayload: decodePayload,
 		chunkText: chunkText,
 		encodeChunks: encodeChunks,
+		packLines: packLines,
 		createReassembler: createReassembler,
 	};
 });
