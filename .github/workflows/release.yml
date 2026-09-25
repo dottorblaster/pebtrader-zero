@@ -1,0 +1,68 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+env:
+  PEBBLE_TOOL_VERSION: "5.0.40"
+  PEBBLE_SDK_VERSION: "4.33.1"
+
+jobs:
+  release:
+    name: Build and release .pbw
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v7
+
+      - name: Install uv
+        # setup-uv publishes only exact semver tags (no floating major tag).
+        uses: astral-sh/setup-uv@v10.2.0
+        with:
+          enable-cache: true
+          cache-dependency-glob: ".github/workflows/release.yml"
+
+      - name: Cache Pebble SDK
+        uses: actions/cache@v6
+        with:
+          path: ~/.local/share/pebble-sdk
+          key: pebble-sdk-${{ runner.os }}-${{ env.PEBBLE_SDK_VERSION }}-tool-${{ env.PEBBLE_TOOL_VERSION }}
+
+      - name: Install pebble-tool
+        run: |
+          uv tool install "pebble-tool==${PEBBLE_TOOL_VERSION}"
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Install Pebble SDK
+        run: |
+          # `pebble sdk install` exits non-zero when the SDK is already
+          # installed, so only install on a cache miss.
+          if [ -d "$HOME/.local/share/pebble-sdk/SDKs/${PEBBLE_SDK_VERSION}" ]; then
+            echo "SDK ${PEBBLE_SDK_VERSION} already installed (cache hit)"
+          else
+            pebble sdk install "${PEBBLE_SDK_VERSION}"
+          fi
+          pebble sdk activate "${PEBBLE_SDK_VERSION}"
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build
+        run: pebble build
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" build/*.pbw \
+            --title "$GITHUB_REF_NAME" \
+            --generate-notes

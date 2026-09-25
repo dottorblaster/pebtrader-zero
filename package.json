@@ -2,8 +2,13 @@
   "name": "pebtrader-zero",
   "author": "Alessio Biancalana",
   "version": "0.1.0",
+  "description": "View the state of your CardTrader Zero orders on a Pebble watch.",
   "keywords": [
-    "pebble-app"
+    "pebble-app",
+    "pebble",
+    "cardtrader",
+    "trading-cards",
+    "orders"
   ],
   "private": true,
   "scripts": {
@@ -46,7 +51,14 @@
       "API_BASE"
     ],
     "resources": {
-      "media": []
+      "media": [
+        {
+          "type": "bitmap",
+          "name": "MENU_ICON",
+          "file": "images/icon.png",
+          "menuIcon": true
+        }
+      ]
     }
   }
 }

@@ -68,6 +68,10 @@ pebble login
 pebble install --cloudpebble
 ```
 
+Tagged builds are attached to
+[Releases](https://github.com/dottorblaster/pebtrader-zero/releases) as a
+downloadable `.pbw`.
+
 ### 4. Configure it
 
 Add your CardTrader API token from the app's settings in the Pebble mobile app.
