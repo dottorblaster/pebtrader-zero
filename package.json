@@ -1,7 +1,7 @@
 {
   "name": "pebtrader-zero",
   "author": "Alessio Biancalana",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "View the state of your CardTrader Zero orders on a Pebble watch.",
   "keywords": [
     "pebble-app",
