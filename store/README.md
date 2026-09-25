@@ -1,7 +1,8 @@
 # App store submission
 
 Everything needed to publish PebTrader Zero to the Pebble app store, and how to
-do it.
+do it. For the version/tag → GitHub Release flow, see
+[docs/releasing.md](../docs/releasing.md).
 
 ## Assets
 

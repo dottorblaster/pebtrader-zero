@@ -115,6 +115,7 @@ Alloy apps have two JavaScript environments: `embeddedjs` runs on the watch,
 - [Architecture](docs/architecture.md) — components, data flow, endpoints
 - [Protocol](docs/protocol.md) — the watch ↔ phone wire contract
 - [Security & privacy](SECURITY.md) — threat model and privacy note
+- [Releasing](docs/releasing.md) — versioning, tags, GitHub Releases and the app store
 - [Troubleshooting](docs/troubleshooting.md) — common problems
 
 ## Testing
