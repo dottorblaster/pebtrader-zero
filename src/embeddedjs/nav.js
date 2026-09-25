@@ -6,9 +6,10 @@
  * heap cannot afford it).
  *
  * List item shape: { primary, secondary, value, action }.
+ * `accent` optionally overrides the header colour (defaults to black).
  */
 
-export function listScreen(title, items, hint) {
+export function listScreen(title, items, hint, accent) {
 	return {
 		kind: "list",
 		title: title,
@@ -16,27 +17,30 @@ export function listScreen(title, items, hint) {
 		hint: hint || "",
 		index: 0,
 		offset: 0,
+		accent: accent || null,
 	};
 }
 
-export function statusScreen(title, message, hint, action) {
+export function statusScreen(title, message, hint, action, accent) {
 	return {
 		kind: "status",
 		title: title,
 		message: message || "",
 		hint: hint || "",
 		action: action || null,
+		accent: accent || null,
 	};
 }
 
 /** Scrollable list of display lines ({ t: text, h: heading }). */
-export function detailScreen(title, lines, hint) {
+export function detailScreen(title, lines, hint, accent) {
 	return {
 		kind: "detail",
 		title: title,
 		lines: lines || [],
 		hint: hint || "",
 		offset: 0,
+		accent: accent || null,
 	};
 }
 

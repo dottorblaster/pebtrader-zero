@@ -28,6 +28,8 @@ const black = render.makeColor(0, 0, 0);
 const white = render.makeColor(255, 255, 255);
 const gray = render.makeColor(120, 120, 120);
 const dark = render.makeColor(50, 50, 50);
+// CardTrader brand blue (#2AA8F8).
+const brand = render.makeColor(0x2a, 0xa8, 0xf8);
 
 const ROUND = screen.width === screen.height;
 const HEADER_H = ROUND ? 32 : 30;
@@ -198,7 +200,7 @@ class Shell {
 
 		const screen = this.nav.current;
 		if (screen) {
-			render.fillRectangle(black, 0, 0, render.width, HEADER_H);
+			render.fillRectangle(screen.accent || black, 0, 0, render.width, HEADER_H);
 			const title = fitText(screen.title, fontHeader, render.width - SIDE_PAD * 2);
 			const titleWidth = render.getTextWidth(title, fontHeader);
 			render.drawText(title, fontHeader, white, (render.width - titleWidth) / 2, (HEADER_H - fontHeader.height) / 2);
@@ -488,8 +490,10 @@ class Shell {
 
 	openBox() {
 		this.request("box");
-		const cached = this.boxText ? detailScreen("CT0 box", this.boxText.split("\n"), "Back to return") : null;
-		const screen = cached || statusScreen("CT0 box", "Loading\u2026", "Back to return");
+		const cached = this.boxText
+			? detailScreen("CT0 box", this.boxText.split("\n"), "Back to return", brand)
+			: null;
+		const screen = cached || statusScreen("CT0 box", "Loading\u2026", "Back to return", null, brand);
 		this.loadingScreen = screen;
 		this.nav.push(screen);
 		this.draw();
@@ -503,7 +507,7 @@ class Shell {
 		this.boxText = text;
 		this.persist();
 		const lines = text.length ? text.split("\n") : [];
-		const screen = detailScreen("CT0 box", lines, "Back to return");
+		const screen = detailScreen("CT0 box", lines, "Back to return", brand);
 
 		if (this.nav.current === this.loadingScreen) {
 			this.loadingScreen = null;
