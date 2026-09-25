@@ -36,15 +36,27 @@ Pebble mobile app. Check with `pebble login --status`.
 store/publish.sh
 ```
 
-The first run creates the app. It is interactive, so it can prompt for the
-**category** (e.g. *Tools & Utilities*). The script supplies the name,
-description, icons and screenshots.
+The first run creates the app; later runs upload a new release. The script
+always uses the icons, screenshots and description in this directory, and runs
+`pebble publish --non-interactive` so those are actually applied.
 
-For later releases, add `--is-published` (and `--release-notes`) as needed:
+The **category** defaults to whatever the CLI picks; override it with:
+
+```sh
+CATEGORY=tools store/publish.sh
+```
+
+More flags are passed straight through:
 
 ```sh
 store/publish.sh --is-published --release-notes "Add the CT0 box screen."
 ```
+
+> If you run `pebble publish` **without** `--non-interactive` it ignores the
+> `--icon-*`/`--screenshots` flags and prompts instead. When it asks
+> *"Do you have app icons already…"*, choose **1** and give it
+> `store/icon-small.png` (80×80) and `store/icon-large.png` (144×144) —
+> don't choose *generate*, we already have better ones.
 
 The underlying command is:
 

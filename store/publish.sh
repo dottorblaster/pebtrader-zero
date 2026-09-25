@@ -6,19 +6,30 @@
 # account as the Pebble mobile app).
 #
 # Usage:
-#   store/publish.sh                 # interactive (prompts for category etc.)
-#   store/publish.sh --is-published  # extra flags are passed to `pebble publish`
+#   store/publish.sh                       # create/publish with the assets below
+#   store/publish.sh --is-published        # extra flags go to `pebble publish`
+#   CATEGORY=tools store/publish.sh        # override the store category
+#   store/publish.sh --release-notes "..." 
 #
-# The first publish creates the app; the CLI prompts for the category and uses
-# the assets below. Later publishes upload a new release.
+# Runs non-interactively so the icons, screenshots and description below are
+# actually used (an interactive `pebble publish` ignores those flags and
+# prompts instead). The first run creates the app; later runs add a release.
 
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
+# Optional: the store category key. Omit to let the CLI pick its default.
+CATEGORY_FLAG=()
+if [ -n "${CATEGORY:-}" ]; then
+  CATEGORY_FLAG=(--category "$CATEGORY")
+fi
+
 pebble publish \
+  --non-interactive \
   --name "PebTrader Zero" \
   --description "$(cat store/description.md)" \
   --icon-small store/icon-small.png \
   --icon-large store/icon-large.png \
   --screenshots store/emery_*.png store/gabbro_*.png \
+  "${CATEGORY_FLAG[@]}" \
   "$@"
